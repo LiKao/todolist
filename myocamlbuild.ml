@@ -107,7 +107,7 @@ struct
     (*The command-line for [use_batteries] and [use_batteries_r]*)
 
     let cl_use_boilerplate = [A"-package"; A "batteries.pa_type_conv.syntax,batteries,sexplib.syntax"]
-    and cl_use_batteries   = [A"-package"; A "batteries.syntax,sexplib.syntax"; A "-package"; A "batteries"]
+    and cl_use_batteries   = [A"-package"; A "sexplib,batteries.syntax,sexplib.syntax"; A "-package"; A "batteries"]
     and cl_use_batteries_o = []
               (*[cl_use_batteries_o]: extensions which only make sense in original syntax*)
     and cl_camlp4o         = [A"-syntax";  A "camlp4o"]
