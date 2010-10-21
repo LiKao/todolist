@@ -50,7 +50,7 @@ let weekstrings = [
 	(Saturday,"Samstag");
 	(Sunday,"Sonntag")]
 
-type repetition = Dayly
+type repetition = Daily
                 | Weekly of weekday
 								| Monthly of int
 								| Weekdays
