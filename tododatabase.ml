@@ -11,7 +11,8 @@ type month = January
 					 | September
 					 | Oktober
 					 | November
-					 | December with sexp 
+					 | December 
+					 with sexp 
 
 let monthstrings = [
 	(January,"Januar");
@@ -70,7 +71,15 @@ type pending
 type closed
 						
 (* The actual type of todos 'a can be pending or closed *)																								
-type 'a todo = tododata with sexp 
+type 'a todo = tododata with sexp
+
+type 'a todolist = ('a todo) list with sexp
+
+let add_todo todo todolist    = todo :: todolist
+let delete_todo todo todolist = List.filter (fun x -> x != todo) todolist
+
+
+
 
               
          
