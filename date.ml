@@ -28,6 +28,11 @@ let monthstrings = [
 	(November,"November");
 	(December,"Dezember")]
 	
+let choose_month =
+	let month_menu = Interaction.make_choices monthstrings "Monat auswählen" in
+	(fun () -> Interaction.display_choice month_menu)
+		
+	
 let monthnumbers = [
 	(January,   0 );
 	(February,  1 );
@@ -83,6 +88,10 @@ let weekstrings = [
 	(Friday,"Freitag");
 	(Saturday,"Samstag");
 	(Sunday,"Sonntag")]
+	
+let choose_weekday =
+	let weekday_menu = Interaction.make_choices weekstrings "Wochentag auswählen" in
+	(fun () -> Interaction.display_choice weekday_menu)
 	
 let string_of_weekday weekday = List.assoc weekday weekstrings 
 	
