@@ -1,7 +1,7 @@
 <**/*.ml> or <**/*.mli> or <**/*.mlpack> or <**/*.ml.depends>: ocaml, use_batteries, annot
-<**/*.byte>: ocaml, byte, program
+<**/*.byte>: ocaml, byte, use_batteries, linkpkg, program
 <**/*.odoc>: ocaml, doc
-<**/*.native>: ocaml, native, program
+<**/*.native>: ocaml, native, use_batteries, linkpgk, program
 <**/*.cma>: ocaml, byte, library
 <**/*.cmxa>: ocaml, native, library
 <**/*.cmo>: ocaml, byte
