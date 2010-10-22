@@ -17,12 +17,15 @@ let (|->) (shortcut,name,menustub) value = {title = menustub.title;
 																					   [(shortcut,{name = name;value = value})]}
 let (|%|) menustub shortcut = (shortcut,menustub)																						
 		
-let make_choices values printer title =
+let choices_of_array values printer title =
 	let choices = Array.mapi 
 	  (fun i value -> (sprintf "%i" i,{name = printer value; value = value}))
 		values
 	in 
 	{title = title; choices = Array.to_list choices} 
+	
+let choices_of_list values =
+	choices_of_array (Array.of_list values)	
 		
 let display_choice menu =
 	printf "\n\n%s\n" menu.title;

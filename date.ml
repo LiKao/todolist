@@ -61,7 +61,7 @@ let months = [|
 			December|]
 			
 let choose_month =
-	let month_menu = Interaction.make_choices months string_of_month "Monat auswählen" in
+	let month_menu = Interaction.choices_of_array months string_of_month "Monat auswählen" in
 	(fun () -> Interaction.display_choice month_menu)			
 			
 type dayofmonth = int with sexp		
@@ -113,7 +113,7 @@ let weekdays = [|
 	 Saturday|]
 	
 let choose_weekday =
-	let weekday_menu = Interaction.make_choices weekdays string_of_weekday "Wochentag auswählen" in
+	let weekday_menu = Interaction.choices_of_array weekdays string_of_weekday "Wochentag auswählen" in
 	(fun () -> Interaction.display_choice weekday_menu)
 	
 let compare_month month1 month2 =
