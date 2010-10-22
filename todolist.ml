@@ -11,19 +11,14 @@ let _ =
 	with Unix.Unix_error _ ->
 		Unix.mkdir datadir 0o777
 
-let open_todo_file = sprintf "%s/open.sexp" datadir
-let closed_todo_file = sprintf "%s/closed.sexp" datadir
+let database_prefix = sprintf "%s/todo" datadir
 
-
-
-let open_todos = Tododatabase.load open_todo_file
-
-let closed_todos = Tododatabase.load closed_todo_file
+let db = Tododatabase.load database_prefix
 
 let _ =
   let rec main () =
 		printf "Heute ist %s.\n" (Date.string_of_date (Date.get_today ()));
-		let quit = (Interaction.display_menu (Inout.main_menu (open_todos,closed_todos))) () in
+		let quit = (Interaction.display_menu (Inout.main_menu db)) () in
 		if not quit then
 			main ()
 		else
@@ -31,5 +26,4 @@ let _ =
 		in
 		main ()
 		
-let _ = Tododatabase.store open_todo_file !open_todos
-let _ = Tododatabase.store closed_todo_file !closed_todos
+let _ = Tododatabase.store database_prefix db

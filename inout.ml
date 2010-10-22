@@ -15,7 +15,7 @@ let choose_repetition ()=
 let choose_date () =
 	{month = January;day=1;year=2010}
 	
-let add_todo (open_todos,_) () =
+let add_todo db () =
 	let todo_type_menu =
 		"Art des Todoeintrags" |$|
 		"h" |: "Heute"              |-> (fun () -> (Todo.Single   (get_today         ()))) |%|
@@ -27,26 +27,26 @@ let add_todo (open_todos,_) () =
 	flush stdout;
 	let todoname = input_line stdin in
 	let todo = Todo.make_open todotype todoname in
-	Tododatabase.add todo open_todos;
+	Tododatabase.add todo db;
 	false
 	
-let show_todos (open_todos,_) () =
+let show_todos db () =
 	let printer todo = Printf.printf "%s\n" (Todo.string_of_todo todo) in  
-	List.iter printer !open_todos;
+	List.iter printer db.Tododatabase.open_todos;
 	false
 	
 
-let close_todo (open_todos,closed_todos) () =
-	let todo = Tododatabase.choose open_todos in
+let close_todo db () =
+	let todo = Tododatabase.choose db.Tododatabase.open_todos in
 	let closed = Todo.close todo (get_today ()) in
-	Tododatabase.add closed closed_todos;
+	Tododatabase.add_closed closed db;
 	if not (Todo.is_repeated todo) then
-		Tododatabase.delete todo open_todos;
+		Tododatabase.delete todo db;
 	false
 
-let main_menu todos = 
+let main_menu db = 
 	"Main Menu" |$|
-	"h" |: "Todo hinzufuegen"            |-> add_todo   todos  |%|
-	"a" |: "aktuelle Todos anzeigen"     |-> show_todos todos  |%|
-	"e" |: "Todo als erledigt markieren" |-> close_todo todos  |%|
+	"h" |: "Todo hinzufuegen"            |-> add_todo   db  |%|
+	"a" |: "aktuelle Todos anzeigen"     |-> show_todos db  |%|
+	"e" |: "Todo als erledigt markieren" |-> close_todo db  |%|
 	"b" |: "Programm beenden"            |-> (fun () -> true)
