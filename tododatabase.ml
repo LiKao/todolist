@@ -1,5 +1,9 @@
 TYPE_CONV_PATH "Current.Module.Name"
 
+open Sexplib
+
+(** Types **)
+
 type repetition = 
 	| Daily
 	| Weekly of Date.weekday
@@ -13,24 +17,12 @@ type todotime =
   | Single   of Date.date
 	with sexp
 	
-let is_repeated =
-	function
-		| Repeated _ -> true
-		| Single   _ -> false
-	
 type todostate = 
 	| Pending
 	| Closed     of Date.date
 	| Unfinished of Date.date
 	with sexp
 	
-let is_open =
-	function
-		| Pending       -> true
-		| Closed      _ -> false
-		| Unfinished  _ -> false
-							
-
 type tododata = 
 	{duetime : todotime;
    subject : string;
@@ -42,15 +34,48 @@ type todolist = tododata list with sexp
 
 type database = todolist ref
 
+(** Creating, loading and storing  databases **)
+
 let make_database () = ref []
 
-let make_open_todo duetime name = {duetime = duetime;subject=name;state=Pending}
+let load filename = 
+	try
+		ignore (Unix.stat filename);
+		let sexp = Sexp.load_sexp filename in
+		ref (todolist_of_sexp sexp) 
+	with Unix.Unix_error _ ->
+		make_database ()
+		
+let store filename database =
+	let sexp = sexp_of_todolist database in
+	let outchan = open_out filename in
+	Sexp.output_hum outchan sexp
 
-let add_todo todo database    = database := todo :: !database
-let delete_todo todo database = List.filter (fun x -> x != todo) database
+(** Database manipulations **)
 
-let close_todo todo date = {todo with state=Closed date}
-let drop_todo  todo date = {todo with state=Unfinished date}
+let add todo database    = database := todo :: !database
+let delete todo database = database := List.filter (fun x -> x != todo) !database
+
+(** Queries on Todos **)
+
+let is_open todo =
+	match todo.state with
+	| Pending       -> true
+	| Closed      _ -> false
+	| Unfinished  _ -> false
+
+let is_repeated todo =
+	match todo.duetime with
+	| Repeated _ -> true
+	| Single   _ -> false
+
+(** Todo manipulations **)
+
+let make_open duetime name = {duetime = duetime;subject=name;state=Pending}
+let close todo date = {todo with state=Closed date}
+let drop  todo date = {todo with state=Unfinished date}
+
+(** conversion functions **)
 
 let string_of_repetition =
 	function
@@ -68,6 +93,13 @@ let string_of_todotime =
 
 let string_of_todo todo =
 	Printf.sprintf "%s\t %s" todo.subject (string_of_todotime todo.duetime)
+	
+(** Operations with todos **)
+	
+let choose todos = 
+	let menu = Interaction.choices_of_list !todos string_of_todo "Todo Auswählen" in
+	Interaction.display_choice menu
+	
 
 
               
