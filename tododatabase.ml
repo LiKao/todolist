@@ -15,17 +15,10 @@ type tododata = {duetime : todotime;
                  subject : string}
 								with sexp
 
-(* States of todos as phantom types to allow generic type*)
-(* checked data bases *)																
-type pending
-type closed
-						
-(* The actual type of todos 'a can be pending or closed *)																								
-type 'a todo = tododata with sexp
+																								
+type todolist = tododata list with sexp
 
-type 'a todolist = ('a todo) list with sexp
-
-type 'a database = 'a todolist ref
+type database = todolist ref
 
 let make_database () = ref []
 
