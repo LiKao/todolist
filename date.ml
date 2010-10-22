@@ -1,5 +1,7 @@
 TYPE_CONV_PATH "Current.Module.Name"
 
+type year = int with sexp		
+
 type month = January
            | February
 					 | March
@@ -14,40 +16,35 @@ type month = January
 					 | December 
 					 with sexp 
 					
-let monthstrings = [
-	(January,"Januar");
-	(February,"Februar");
-  (March,"März");
-	(April,"April");
-	(May,"Mai");
-	(June,"Juni");
-	(July,"Juli");
-	(August,"August");
-	(September,"September");
-	(Oktober,"Oktober");
-	(November,"November");
-	(December,"Dezember")]
+let int_of_month = 
+	function
+		January    ->      0
+	|	February   ->      1 
+	| March      ->      2
+	|	April      ->      3
+	|	May        ->      4
+	|	June       ->      5
+	|	July       ->      6
+	|	August     ->      7
+	|	September  ->      8
+	|	Oktober    ->      9
+	|	November   ->     10
+	|	December   ->     11	
 	
-let choose_month =
-	let month_menu = Interaction.make_choices monthstrings "Monat auswählen" in
-	(fun () -> Interaction.display_choice month_menu)
-		
-	
-let monthnumbers = [
-	(January,   0 );
-	(February,  1 );
-  (March,     2 );
-	(April,     3 );
-	(May,       4 );
-	(June,      5 );
-	(July,      6 );
-	(August,    7 );
-	(September, 8 );
-	(Oktober,   9 );
-	(November,  10);
-	(December,  11)]	
-	
-let string_of_month month = List.assoc month monthstrings
+let string_of_month = 
+	function
+	  January -> "Januar"
+	|	February -> "Februar"
+	| March -> "März"
+	|	April -> "April"
+	|	May -> "Mai"
+	|	June -> "Juni"
+	|	July -> "Juli"
+	|	August -> "August"
+	|	September -> "September"
+	|	Oktober -> "Oktober"
+	|	November -> "November"
+	|	December -> "Dezember"
 	
 let months = [|
 			January;
@@ -63,37 +60,48 @@ let months = [|
 			November;
 			December|]
 			
-type dayofmonth = int with sexp	
-type year = int with sexp			
+let choose_month =
+	let month_menu = Interaction.make_choices months string_of_month "Monat auswählen" in
+	(fun () -> Interaction.display_choice month_menu)			
+			
+type dayofmonth = int with sexp		
 	
 type date = {month : month;
              day : dayofmonth;
 						 year : year}
 						with sexp
 						
-type weekday = Monday
-             | Tuesday
-						 | Wednesday
-						 | Thursday
-						 | Friday
-						 | Saturday
-						 | Sunday
-						 with sexp
+type weekday =
+	| Sunday 
+	| Monday
+  | Tuesday
+	| Wednesday
+	| Thursday
+	| Friday
+	| Saturday
+  with sexp
 
-let weekstrings = [
-	(Monday,"Montag");
-	(Tuesday,"Dienstag");
-	(Wednesday,"Mittwoch");
-	(Thursday,"Donnerstag");
-	(Friday,"Freitag");
-	(Saturday,"Samstag");
-	(Sunday,"Sonntag")]
-	
-let choose_weekday =
-	let weekday_menu = Interaction.make_choices weekstrings "Wochentag auswählen" in
-	(fun () -> Interaction.display_choice weekday_menu)
-	
-let string_of_weekday weekday = List.assoc weekday weekstrings 
+let string_of_weekday = 
+	function
+  	Sunday    -> "Sonntag"
+	|	Monday    -> "Montag"
+	|	Tuesday   -> "Dienstag"
+	|	Wednesday -> "Mittwoch"
+	|	Thursday  -> "Donnerstag"
+	|	Friday    -> "Freitag"
+	|	Saturday  -> "Samstag"
+
+
+let int_of_weekday =
+	function
+	|	Sunday    -> 0
+	|	Monday    -> 1
+	|	Tuesday   -> 2
+	|	Wednesday -> 3
+	|	Thursday  -> 4
+	|	Friday    -> 5
+	|	Saturday  -> 6
+	 
 	
 let weekdays = [|
    Sunday;
@@ -104,9 +112,13 @@ let weekdays = [|
 	 Friday;
 	 Saturday|]
 	
+let choose_weekday =
+	let weekday_menu = Interaction.make_choices weekdays string_of_weekday "Wochentag auswählen" in
+	(fun () -> Interaction.display_choice weekday_menu)
+	
 let compare_month month1 month2 =
-	let monthnum1 = List.assoc month1 monthnumbers in
-	let monthnum2 = List.assoc month2 monthnumbers in
+	let monthnum1 = int_of_month month1 in
+	let monthnum2 = int_of_month month2 in
 	monthnum1-monthnum2
 	
 let compare date1 date2 =
