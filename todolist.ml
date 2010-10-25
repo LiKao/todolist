@@ -13,7 +13,7 @@ let _ =
 
 let database_prefix = sprintf "%s/todo" datadir
 
-let db = Tododatabase.load database_prefix
+let db = Tododb.load database_prefix
 
 let _ =
   let rec main () =
@@ -26,4 +26,4 @@ let _ =
 		in
 		main ()
 		
-let _ = Tododatabase.store database_prefix db
+let _ = Tododb.store database_prefix db

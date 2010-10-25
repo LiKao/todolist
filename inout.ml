@@ -27,21 +27,21 @@ let add_todo db () =
 	flush stdout;
 	let todoname = input_line stdin in
 	let todo = Todo.make_open todotype todoname in
-	Tododatabase.add todo db;
+	Tododb.add todo db;
 	false
 	
 let show_todos db () =
 	let printer todo = Printf.printf "%s\n" (Todo.string_of_todo todo) in  
-	List.iter printer db.Tododatabase.open_todos;
+	List.iter printer db.Tododb.open_todos;
 	false
 	
 
 let close_todo db () =
-	let todo = Tododatabase.choose db.Tododatabase.open_todos in
+	let todo = Tododb.choose db.Tododb.open_todos in
 	let closed = Todo.close todo (get_today ()) in
-	Tododatabase.add_closed closed db;
+	Tododb.add_closed closed db;
 	if not (Todo.is_repeated todo) then
-		Tododatabase.delete todo db;
+		Tododb.delete todo db;
 	false
 
 let main_menu db = 
