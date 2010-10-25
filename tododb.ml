@@ -45,6 +45,13 @@ let add           todo db = db.open_todos   <- todo :: db.open_todos
 let add_closed    todo db = db.closed_todos <- todo :: db.closed_todos
 let delete        todo db = db.open_todos <- List.filter (fun x -> x != todo) db.open_todos
 
+let close todo db date =
+	let closed = Todo.close todo date in
+	add_closed closed db;
+	if not (Todo.is_repeated todo) then
+		delete todo db 
+	
+
 (** Operations with todos **)
 	
 let choose todos = 

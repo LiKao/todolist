@@ -38,12 +38,9 @@ let show_todos db () =
 
 let close_todo db () =
 	let todo = Tododb.choose db.Tododb.open_todos in
-	let closed = Todo.close todo (get_today ()) in
-	Tododb.add_closed closed db;
-	if not (Todo.is_repeated todo) then
-		Tododb.delete todo db;
+	Tododb.close todo db (get_today ());
 	false
-
+	
 let main_menu db = 
 	"Main Menu" |$|
 	"h" |: "Todo hinzufuegen"            |-> add_todo   db  |%|
