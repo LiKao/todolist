@@ -7,7 +7,6 @@ type year = int with sexp
 let is_leapyear year =
 	(year mod 1000) = 0 || ((year mod 4) = 0 && (year mod 100) !=0) 
 
-
 (** Months **)
 
 type month = January
@@ -190,8 +189,27 @@ let get_weekday date =
 	in
 	let month_item = List.assoc date.month month_table in
 	let day_number = (century_item + year_item + month_item + date.day) mod 7 in
-	weekdays.(day_number)			
+	weekdays.(day_number)				
 			
+let string_of_date date =
+	let weekday = get_weekday date in
+	let weekdaystring = string_of_weekday weekday in
+	let month   = string_of_month date.month in 
+	Printf.sprintf " %s %i. %s %i" weekdaystring date.day month date.year
+	
+(** Accesor functions **)
+
+let get_today () =
+	let u_time = Unix.localtime (Unix.time ()) in
+	{month = months.(u_time.Unix.tm_mon);
+	 day = u_time.Unix.tm_mday;
+	 year = u_time.Unix.tm_year + 1900}
+	
+let is_today date = 
+	compare (get_today ()) date = 0	  
+	
+(** Calculations and Queries **)
+
 let is_last_day_of_month date =
 	date.day = (days_of_month date.month date.year)
 	
@@ -233,23 +251,18 @@ let rec decrement date times =
 		date
 	else
 		decrement (previous_day date) (times-1)
-								
-			
-let string_of_date date =
-	let weekday = get_weekday date in
-	let weekdaystring = string_of_weekday weekday in
-	let month   = string_of_month date.month in 
-	Printf.sprintf " %s %i. %s %i" weekdaystring date.day month date.year
-	
-(** Accesor functions **)
-
-let get_today () =
-	let u_time = Unix.localtime (Unix.time ()) in
-	{month = months.(u_time.Unix.tm_mon);
-	 day = u_time.Unix.tm_mday;
-	 year = u_time.Unix.tm_year + 1900}
-	
-let is_today date = 
-	compare (get_today ()) date = 0	  
-	
+		
+let rec next_weekdate date weekday =
+	if get_weekday date = weekday then
+		date
+	else
+		next_weekdate (next_day date) weekday
+		
+let rec previous_weekdate date weekday =
+	(* if the current date matches the weekday, we want the one before that *)
+	let date = previous_day date in
+	if get_weekday date = weekday then
+		date
+	else
+		previous_weekdate date weekday
 	
