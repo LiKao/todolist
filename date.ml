@@ -192,6 +192,18 @@ let get_weekday date =
 	let day_number = (century_item + year_item + month_item + date.day) mod 7 in
 	weekdays.(day_number)			
 			
+let is_last_day_of_month date =
+	date.day = (days_of_month date.month date.year)
+	
+let is_first_day_of_month date =
+	date.day = 1
+	
+let is_last_day_of_year date =
+	date.day = 31 && date.month = December
+	
+let is_first_day_of_year date =
+	date.day = 1 && date.month = January							
+			
 let string_of_date date =
 	let weekday = get_weekday date in
 	let weekdaystring = string_of_weekday weekday in
