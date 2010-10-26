@@ -64,7 +64,7 @@ struct
 			function
 				node :: nodes ->
 					let comparison = compare node.key range.start in
-					if comparison >= 0 then
+					if comparison > 0 then
 						node.content :: (loop1 nodes)
 					else
 						[]
@@ -74,7 +74,7 @@ struct
 			function
 				node :: nodes -> 
 					let comparison = compare node.key range.finish in
-					if comparison < 0 then
+					if comparison <= 0 then
 						loop1 (node :: nodes)
 					else
 						loop2 nodes
