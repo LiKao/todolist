@@ -84,6 +84,14 @@ let months = [|
 			November;
 			December|]
 			
+let next_month month = 
+	let monthnum = int_of_month month in
+	months.((monthnum + 1) mod 12)
+	
+let previous_month month =
+	let monthnum = int_of_month month in
+	months.((monthnum + 11) mod 12)
+			
 let choose_month =
 	let month_menu = Interaction.choices_of_array months string_of_month "Monat auswählen" in
 	(fun () -> Interaction.display_choice month_menu)
@@ -91,8 +99,7 @@ let choose_month =
 let compare_month month1 month2 =
 	let monthnum1 = int_of_month month1 in
 	let monthnum2 = int_of_month month2 in
-	monthnum1-monthnum2
-			
+	monthnum1-monthnum2	
 
 (** Days in a month **)
 			
@@ -162,23 +169,6 @@ let compare date1 date2 =
 		else
 			date1.day-date2.day
 			
-let string_of_date date =
-	let weekday = get_weekday date in
-	let weekdaystring = string_of_weekday weekday in
-	let month   = string_of_month date.month in 
-	Printf.sprintf " %s %i. %s %i" weekdaystring date.day month date.year	
-	
-(** Accesor functions **)
-
-let get_today () =
-	let u_time = Unix.localtime (Unix.time ()) in
-	{month = months.(u_time.Unix.tm_mon);
-	 day = u_time.Unix.tm_mday;
-	 year = u_time.Unix.tm_year + 1900}
-	
-let is_today date = 
-	compare (get_today ()) date = 0	  
-	
 let get_weekday date =
 	let century = date.year / 100 in
 	let century_item = 2 * (3 - (century mod 4)) in
@@ -200,6 +190,23 @@ let get_weekday date =
 	in
 	let month_item = List.assoc date.month month_table in
 	let day_number = (century_item + year_item + month_item + date.day) mod 7 in
-	weekdays.(day_number)
+	weekdays.(day_number)			
+			
+let string_of_date date =
+	let weekday = get_weekday date in
+	let weekdaystring = string_of_weekday weekday in
+	let month   = string_of_month date.month in 
+	Printf.sprintf " %s %i. %s %i" weekdaystring date.day month date.year
+	
+(** Accesor functions **)
+
+let get_today () =
+	let u_time = Unix.localtime (Unix.time ()) in
+	{month = months.(u_time.Unix.tm_mon);
+	 day = u_time.Unix.tm_mday;
+	 year = u_time.Unix.tm_year + 1900}
+	
+let is_today date = 
+	compare (get_today ()) date = 0	  
 	
 	
