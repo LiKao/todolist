@@ -15,36 +15,38 @@ type todotime =
   | Single   of Date.date
 	with sexp
 	
-type todostate = 
-	| Pending
+type t = 
+	{duetime : todotime;
+   subject : string}
+	with sexp
+	
+type close_state = 
 	| Closed     of Date.date
 	| Unfinished of Date.date
 	with sexp
 	
-type t = 
-	{duetime : todotime;
-   subject : string;
-	 state   : todostate}
+type closed_t =
+	{todo  : t;
+	 state : close_state}
 	with sexp
 	
 (** Queries on Todos **)
-
-let is_open todo =
-	match todo.state with
-	| Pending       -> true
-	| Closed      _ -> false
-	| Unfinished  _ -> false
 
 let is_repeated todo =
 	match todo.duetime with
 	| Repeated _ -> true
 	| Single   _ -> false
 
+let get_closedate closed_todo =
+	match closed_todo.state with
+		| Closed date -> date
+		| Unfinished date -> date
+
 (** Todo manipulations **)
 
-let make_open duetime name = {duetime = duetime;subject=name;state=Pending}
-let close todo date = {todo with state=Closed date}
-let drop  todo date = {todo with state=Unfinished date}
+let make_open duetime name = {duetime = duetime;subject=name}
+let close todo date = {todo = todo; state = Closed date}
+let drop  todo date = {todo = todo; state = Unfinished date}
 
 (** conversion functions **)
 
