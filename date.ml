@@ -202,7 +202,38 @@ let is_last_day_of_year date =
 	date.day = 31 && date.month = December
 	
 let is_first_day_of_year date =
-	date.day = 1 && date.month = January							
+	date.day = 1 && date.month = January
+	
+let next_day date =
+	if is_last_day_of_year date then
+		{day = 1; month = January; year = date.year +1}
+	else if is_last_day_of_month date then
+		{day = 1; month = next_month date.month; year = date.year}
+	else
+		{date with day = date.day +1}
+		
+let previous_day date =
+	if is_first_day_of_year date then
+		{day = 31; month = December; year = date.year -1}
+	else if is_first_day_of_month date then
+		let prev_month = previous_month date.month in
+		let day = days_of_month prev_month date.year in
+		{day = day; month = prev_month; year = date.year}
+	else
+		{date with day = date.day -1}
+		
+let rec increment date times =
+	if times <= 0 then
+		date
+	else
+		increment (next_day date) (times-1)
+
+let rec decrement date times =
+	if times <= 0 then
+		date
+	else
+		decrement (previous_day date) (times-1)
+								
 			
 let string_of_date date =
 	let weekday = get_weekday date in
