@@ -53,6 +53,26 @@ let store prefix db =
 	write_file closed_todo_filename closed_todo_list sexp_of_closedlist;
 	write_file info_filename db.info sexp_of_db_info
 
+(** Database Access **)
+
+let is_active db todo date =
+	let range = Todo.get_active_time todo date in
+	if Daterange.in_range date range then
+		match todo.Todo.duetime with
+		| Todo.Single tododate -> true
+		| Todo.Repeated _ -> 
+				let closed_todos = Daterange.find_range db.closed_todos range in
+				let predicate closed_todo = 
+					closed_todo.Todo.todo.Todo.id = todo.Todo.id
+				in
+				not (List.exists predicate closed_todos)
+	else
+		false
+	
+let get_active db date =
+	List.filter (fun todo -> is_active db todo date) db.open_todos
+	
+
 (** Database manipulations **)
 
 let get_id db =

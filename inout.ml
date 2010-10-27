@@ -31,7 +31,8 @@ let add_todo db () =
 	
 let show_todos db () =
 	let printer todo = Printf.printf "%s\n" (Todo.string_of_todo todo) in  
-	List.iter printer db.Tododb.open_todos;
+	let active_todos = Tododb.get_active db (Date.get_today ()) in
+	List.iter printer active_todos;
 	false
 	
 
