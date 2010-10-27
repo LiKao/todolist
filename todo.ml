@@ -43,6 +43,35 @@ let get_closedate closed_todo =
 		| Closed date -> date
 		| Unfinished date -> date
 
+let get_active_repetition repetition date =
+	match repetition with
+	| Daily -> Daterange.At date
+	| Weekly weekday -> 
+			let start = Date.previous_weekdate date weekday in
+			let finish = Date.next_weekdate date weekday in
+			Daterange.Between {Daterange.start = start; Daterange.finish = finish}
+	| Monthly dayofmonth -> 
+			let start  = Date.previous_monthdate date dayofmonth in
+			let finish = Date.next_monthdate date dayofmonth in
+			Daterange.Between {Daterange.start = start; Daterange.finish = finish}
+	| Weekdays -> 
+			let weekday = Date.get_weekday date in
+			if Date.is_weekday weekday then
+				Daterange.At date
+			else
+				Daterange.Nothing
+	| Weekends ->
+			let weekday = Date.get_weekday date in
+			if Date.is_weekend weekday then
+				Daterange.At date
+			else
+				Daterange.Nothing
+	
+let get_active_time todo date =
+	match todo.duetime with
+		| Repeated repetition -> get_active_repetition repetition date
+		| Single date -> Daterange.Before date	
+
 (** Todo manipulations **)
 
 let make_open name duetime id = {duetime = duetime;subject=name;id=id}
