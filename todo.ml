@@ -17,7 +17,8 @@ type todotime =
 	
 type t = 
 	{duetime : todotime;
-   subject : string}
+   subject : string;
+	 id : int}
 	with sexp
 	
 type close_state = 
@@ -44,7 +45,7 @@ let get_closedate closed_todo =
 
 (** Todo manipulations **)
 
-let make_open duetime name = {duetime = duetime;subject=name}
+let make_open name duetime id = {duetime = duetime;subject=name;id=id}
 let close todo date = {todo = todo; state = Closed date}
 let drop  todo date = {todo = todo; state = Unfinished date}
 

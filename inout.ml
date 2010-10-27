@@ -26,8 +26,7 @@ let add_todo db () =
 	Printf.printf "Betreff: ";
 	flush stdout;
 	let todoname = input_line stdin in
-	let todo = Todo.make_open todotype todoname in
-	Tododb.add todo db;
+	Tododb.make_todo db todoname todotype;
 	false
 	
 let show_todos db () =
