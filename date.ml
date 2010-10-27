@@ -265,4 +265,44 @@ let rec previous_weekdate date weekday =
 		date
 	else
 		previous_weekdate date weekday
+		
+let next_monthdate date dayofmonth =
+	let res =
+		if date.day > dayofmonth then
+			if date.month = December then
+				{month = January;
+			 	 day = dayofmonth;
+				 year = date.year + 1}
+			else
+				{month = next_month date.month;
+				 day = dayofmonth;
+				 year = date.year}
+		else
+			{date with day = dayofmonth}
+	in
+	let max_days = days_of_month res.month res.year in
+	if res.day > max_days then
+		{res with day = max_days}
+	else
+		res
+		
+let previous_monthdate date dayofmonth =
+	let res =
+		if date.day < dayofmonth then
+			if date.month = January then
+				{month = December;
+			 	 day = dayofmonth;
+				 year = date.year - 1}
+			else
+				{month = previous_month date.month;
+				 day = dayofmonth;
+				 year = date.year}
+		else
+			{date with day = dayofmonth}
+	in
+	let max_days = days_of_month res.month res.year in
+	if res.day > max_days then
+		{res with day = max_days}
+	else
+		res 
 	
