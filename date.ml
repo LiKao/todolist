@@ -151,6 +151,19 @@ let choose_weekday =
 	let weekday_menu = Interaction.choices_of_array weekdays string_of_weekday "Wochentag auswählen" in
 	(fun () -> Interaction.display_choice weekday_menu)
 	
+let is_weekday =
+	function
+	|	Sunday    -> false
+	|	Monday    -> true
+	|	Tuesday   -> true
+	|	Wednesday -> true
+	|	Thursday  -> true
+	|	Friday    -> true
+	|	Saturday  -> false
+
+let is_weekend weekday =
+	not (is_weekday weekday)
+	
 (** complete dates (year,month and day) **)
 	
 type date = {month : month;
