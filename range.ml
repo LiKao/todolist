@@ -19,6 +19,8 @@ sig
 		| Before  of key
 		| After   of key
 		| Between of interval 
+	val in_interval : key -> interval -> bool
+	val in_range : key -> range -> bool
 	val empty   : 'a t
 	val add     : 'a t -> key -> 'a -> 'a t
 	val find    : 'a t -> key -> 'a list
@@ -47,6 +49,20 @@ struct
 	
 	let empty = []
 	
+	let in_interval key interval =
+		let b1 = compare key interval.start > 0 in
+		b1 &&
+			let b2 = compare key interval.finish <=0 in
+			b2
+		
+	let in_range key =
+		function 
+		| Nothing          -> false
+		| At      key2     -> compare key key2  = 0
+		| Before  key2     -> compare key key2 <= 0
+		| After   key2     -> compare key key2 >  0
+		| Between interval -> in_interval key interval
+ 
 	let add ls key value =
 		let leaf = {key = key; content = value} in
 		let rec loop =
