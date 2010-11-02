@@ -1,7 +1,7 @@
 #!/bin/sh
 
 OCBUILD="/opt/godi/bin/ocamlbuild";
-TARGETS="todolist.byte todolist.native";
+TARGETS="todolist.cma";
 
 
 cleanup() {

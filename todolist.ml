@@ -1,9 +1,6 @@
 open Printf
 
-(* get path to home directory *)
-let homedir = Unix.getenv "HOME"
-
-let datadir = sprintf "%s/.todolist" homedir
+let datadir = "/opt/godi/var/todolist/"
 
 let _ = 
 	try
