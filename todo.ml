@@ -72,6 +72,12 @@ let get_active_time todo date =
 		| Repeated repetition -> get_active_repetition repetition date
 		| Single date -> Daterange.Before date	
 
+let get_duetime todo =
+	todo.duetime
+	
+let get_subject todo =
+	todo.subject
+
 (** Todo manipulations **)
 
 let make_open name duetime id = {duetime = duetime;subject=name;id=id}
