@@ -8,3 +8,5 @@
 <**/*.cmi>: ocaml, byte, native
 <**/*.cmx>: ocaml, native
 <**/*.annot>: not_hygienic
+<services>: include
+<services/*.ml>: ocaml, pkg_ocsigen, thread, annot
