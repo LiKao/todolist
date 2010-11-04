@@ -1,5 +1,9 @@
 TYPE_CONV_PATH "Date"
 
+(** Exceptions **)
+
+exception Invalid_date
+
 (** Years **)
 
 type year = int with sexp
@@ -171,6 +175,16 @@ type date = {month : month;
 						 year : year}
 						with sexp
 						
+let date_of_ints year monthnum day =
+	if monthnum > 12 or monthnum < 1 then
+		raise Invalid_date;
+	let month = months.(monthnum - 1) in
+	if day > days_of_month month year then
+		raise Invalid_date; 
+	{year = year;
+	 day = day;
+	 month = month}
+						
 let compare date1 date2 =
 	if date1.year != date2.year then
 		date1.year-date2.year
@@ -209,6 +223,18 @@ let string_of_date date =
 	let weekdaystring = string_of_weekday weekday in
 	let month   = string_of_month date.month in 
 	Printf.sprintf " %s %i. %s %i" weekdaystring date.day month date.year
+	
+let get_month date =
+	date.month
+	
+let get_monthnum date =
+	(int_of_month date.month) + 1
+	
+let get_day date =
+	date.day
+	
+let get_year date =
+	date.year
 	
 (** Accesor functions **)
 
