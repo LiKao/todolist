@@ -17,9 +17,10 @@ let create db =
 		div 
 		[
 			h1 [pcdata "Todos für heute"];
-	  	Todoservice.show_todos db	
+	  	Todoservice.show_todos db	(Date.get_today ())
 		]
 	in
 	let head = make_head "Hallo" in
 	let body = make_inner_body f in
-	make_page "" head body
+	ignore (make_page "" head body);
+	ignore (Todoservice.todolist_service db)
