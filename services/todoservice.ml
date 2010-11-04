@@ -19,7 +19,7 @@ let show_todos db date =
 		) 
 		(List.map printer active_todos)
 		
-let todolist_service db = 
+let todolist_service db =  
 	 register_new_service
    	~path:["todos"]
     ~get_params:(suffix (int "year" ** int "month" ** int "day"))
@@ -28,17 +28,15 @@ let todolist_service db =
 				let date = Date.date_of_ints year month day in
 				let datestring = Date.string_of_date date in
 				let titlestring = Printf.sprintf "Todos für %s" datestring in
-				return (
-					html 
-						(head (title (pcdata titlestring)) [])
-					 	(body [
-							div [
-									h1 [pcdata titlestring];
-									show_todos db date
-							]
-						])
-				)
+				let htmlhead = title (pcdata titlestring) in
+				let content =
+					[
+						h1 [pcdata titlestring];
+						show_todos db date
+					]
+				in  
+				Service_base.make_page htmlhead content
 			with Date.Invalid_date ->
-				return Error.invalid_date
+				Error.invalid_date
 		)
 			
