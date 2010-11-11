@@ -1,5 +1,7 @@
 TYPE_CONV_PATH "Date"
 
+open Helpers
+
 (** Exceptions **)
 
 exception Invalid_date
@@ -344,4 +346,16 @@ let previous_monthdate date dayofmonth =
 		{res with day = max_days}
 	else
 		res 
-	
+
+let julian_day date =
+	let monthnum = (int_of_month date.month)+1 in
+	let y,m = 
+		if monthnum > 2 then 
+			float_of_int |< (date.year,monthnum)
+		else
+			float_of_int |< (date.year-1,monthnum+12)
+	in
+	let yeardays = int_of_float ((y+.4716.0)*.365.25) in
+	let monthdays = int_of_float (m*.30.6001) in
+	yeardays + monthdays + date.day - 33
+			 
