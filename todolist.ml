@@ -12,6 +12,7 @@ let database_prefix = sprintf "%s/todo" datadir
 
 let db = Tododb.load database_prefix
 
-let _ = Services.create db
+let _ = Services.register_all db
+	
 		
 let _ = Tododb.store database_prefix db

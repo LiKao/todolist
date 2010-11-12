@@ -5,8 +5,7 @@ open Eliom_parameters
 open Eliom_sessions
 open Eliom_predefmod.Xhtml
 
-let show_todos db date =
-	let active_todos = Tododb.get_active db date in
+let todo_table todos =
 	let printer todo =  
 		let subject = Todo.get_subject todo in
 		let duetime = Todo.string_of_todotime (Todo.get_duetime todo) in
@@ -19,13 +18,15 @@ let show_todos db date =
 			(Basic_Tables.td [div ~a:[a_class ["tableheader"]] [pcdata "Betreff"]]) 
 			[Basic_Tables.td [div ~a:[a_class ["tableheader"]] [pcdata "Datum"]]]
 		) 
-		(List.map printer active_todos)
+		(List.map printer todos) 
+
+let show_todos db date =
+	let active_todos = Tododb.get_active db date in
+	todo_table active_todos
 		
-let todolist_service db =  
-	 register_new_service
-   	~path:["todos"]
-    ~get_params:(suffix (int "year" ** int "month" ** int "day"))
-		(fun _ (year,(month,day)) () ->
+let register_todolist_service make_service todoservice db = 
+	register todoservice
+		(fun sp (year,(month,day)) () ->
 			try 
 				let date = Date.date_of_ints year month day in
 				let datestring = Date.string_of_date date in
@@ -37,8 +38,8 @@ let todolist_service db =
 						show_todos db date
 					]
 				in  
-				Service_base.make_page htmlhead content
+				make_service sp htmlhead content
 			with Date.Invalid_date ->
-				Error.invalid_date
+				Error.invalid_date make_service sp
 		)
 			
