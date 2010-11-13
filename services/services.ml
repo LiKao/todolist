@@ -21,6 +21,12 @@ let listservice =
 		~path:["todos"] 
 		~get_params:(suffix (int "year" ** int "month" ** int "day")) 
 		()
+		
+let editservice =
+	Eliom_services.new_service
+	~path:["edit"]
+	~get_params:unit
+	()
 
 let navigation sp () =
 	let today = Date.get_today () in
@@ -46,12 +52,17 @@ let navigation sp () =
 					];
 				]
 		])
-		[]
+		[li [
+			div ~a:[a_class ["li"]]
+				[Eliom_predefmod.Xhtml.a editservice sp [pcdata "Todos bearbeiten"] ()]
+			]
+		]
 	]
 
 let make_service sp htmlhead content = 
 	make_page (navigation sp)	htmlhead content
 	
 let register_all db =
-	Listservice.make make_service listservice db
+	Listservice.make make_service listservice db;
+	Editservice.make make_service editservice db
 	

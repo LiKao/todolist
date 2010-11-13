@@ -72,6 +72,9 @@ let is_active db todo date =
 let get_active db date =
 	List.filter (fun todo -> is_active db todo date) db.open_todos
 	
+let get_open db =
+	db.open_todos
+	
 
 (** Database manipulations **)
 
