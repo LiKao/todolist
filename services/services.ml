@@ -16,7 +16,7 @@ let make_page navigation htmlhead content =
 		)
 	)		
 						
-let todoservice = 
+let listservice = 
 	Eliom_services.new_service 
 		~path:["todos"] 
 		~get_params:(suffix (int "year" ** int "month" ** int "day")) 
@@ -33,16 +33,16 @@ let navigation sp () =
 			ul ~a:[a_class ["level2"]]
 				(li [
 					div ~a:[a_class ["li"]] 
-						[Eliom_predefmod.Xhtml.a todoservice sp [pcdata "Heute"] (Date.get_year today,(Date.get_monthnum today,Date.get_day today))]
+						[Eliom_predefmod.Xhtml.a listservice sp [pcdata "Heute"] (Date.get_year today,(Date.get_monthnum today,Date.get_day today))]
 					]
 				)
 				[li [
 					div ~a:[a_class ["li"]] 
-						[Eliom_predefmod.Xhtml.a todoservice sp [pcdata "Morgen"] (Date.get_year tomorrow,(Date.get_monthnum tomorrow,Date.get_day tomorrow))]
+						[Eliom_predefmod.Xhtml.a listservice sp [pcdata "Morgen"] (Date.get_year tomorrow,(Date.get_monthnum tomorrow,Date.get_day tomorrow))]
 					];
 				 li [
 					div ~a:[a_class ["li"]] 
-						[Eliom_predefmod.Xhtml.a todoservice sp [pcdata "Gestern"] (Date.get_year yesterday,(Date.get_monthnum yesterday,Date.get_day yesterday))]
+						[Eliom_predefmod.Xhtml.a listservice sp [pcdata "Gestern"] (Date.get_year yesterday,(Date.get_monthnum yesterday,Date.get_day yesterday))]
 					];
 				]
 		])
@@ -53,5 +53,5 @@ let make_service sp htmlhead content =
 	make_page (navigation sp)	htmlhead content
 	
 let register_all db =
-	Todoservice.register_todolist_service make_service todoservice db
+	Listservice.make make_service listservice db
 	
