@@ -99,12 +99,7 @@ let make_todo db name duetime  =
 	let todo = Todo.make_open name duetime id in
 	add todo db
 	
-(** Operations with todos **)
-	
-let choose todos = 
-	let menu = Interaction.choices_of_list todos Todo.string_of_todo "Todo Auswählen" in
-	Interaction.display_choice menu
-	
+(** Operations with todos **)	
 
 
               

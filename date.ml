@@ -97,10 +97,6 @@ let previous_month month =
 	let monthnum = int_of_month month in
 	months.((monthnum + 11) mod 12)
 			
-let choose_month =
-	let month_menu = Interaction.choices_of_array months string_of_month "Monat auswählen" in
-	(fun () -> Interaction.display_choice month_menu)
-	
 let compare_month month1 month2 =
 	let monthnum1 = int_of_month month1 in
 	let monthnum2 = int_of_month month2 in
@@ -152,10 +148,6 @@ let weekdays = [|
 	 Thursday;
 	 Friday;
 	 Saturday|]
-	
-let choose_weekday =
-	let weekday_menu = Interaction.choices_of_array weekdays string_of_weekday "Wochentag auswählen" in
-	(fun () -> Interaction.display_choice weekday_menu)
 	
 let is_weekday =
 	function
