@@ -5,13 +5,15 @@ open Eliom_parameters
 open Eliom_sessions
 open Eliom_predefmod.Xhtml
 
+open Common
+
 let make_page navigation htmlhead content =
 	return (
 		html 
 		(head htmlhead []) 
 		(body
-			[div ~a:[a_id "navigation"] (navigation ()); 
-		 	 div ~a:[a_id "content"] content
+			[div_with_id "navigation" (navigation ()); 
+		 	 div_with_id "content" content
 			]
 		)
 	)		
@@ -38,22 +40,22 @@ let navigation sp () =
 				[pcdata "Todos"];
 			ul ~a:[a_class ["level2"]]
 				(li [
-					div ~a:[a_class ["li"]] 
+					div_with_class "li" 
 						[Eliom_predefmod.Xhtml.a listservice sp [pcdata "Heute"] (Date.get_year today,(Date.get_monthnum today,Date.get_day today))]
 					]
 				)
 				[li [
-					div ~a:[a_class ["li"]] 
+					div_with_class "li" 
 						[Eliom_predefmod.Xhtml.a listservice sp [pcdata "Morgen"] (Date.get_year tomorrow,(Date.get_monthnum tomorrow,Date.get_day tomorrow))]
 					];
 				 li [
-					div ~a:[a_class ["li"]] 
+					div_with_class "li" 
 						[Eliom_predefmod.Xhtml.a listservice sp [pcdata "Gestern"] (Date.get_year yesterday,(Date.get_monthnum yesterday,Date.get_day yesterday))]
 					];
 				]
 		])
 		[li [
-			div ~a:[a_class ["li"]]
+			div_with_class "li"
 				[Eliom_predefmod.Xhtml.a editservice sp [pcdata "Todos bearbeiten"] ()]
 			]
 		]
