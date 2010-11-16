@@ -1,6 +1,8 @@
 open XHTML.M
 open Eliom_predefmod.Xhtml
 
+let (|>) a f = f a
+
 let div_with_class klass ?(a = []) l = div ~a:(a_class [klass] :: a) l
 let div_with_id id ?(a = []) l = div ~a:(a_id id :: a) l
 let js_script_ext ~src =

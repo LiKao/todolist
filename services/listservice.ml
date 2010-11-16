@@ -9,8 +9,8 @@ let show_todos db date =
 	let active_todos = Tododb.get_active db date in
 	Common.todo_table active_todos
 		
-let make make_service todoservice db = 
-	register todoservice
+let make_daylist make_service listservice db = 
+	register listservice
 		(fun sp (year,(month,day)) () ->
 			try 
 				let date = Date.date_of_ints year month day in
@@ -20,11 +20,27 @@ let make make_service todoservice db =
 				let content =
 					[
 						h1 [pcdata titlestring];
-						show_todos db date
+						show_todos db date;
+						(*br ();
+						Scripts.choose_date listservice sp*)
 					]
 				in  
 				make_service sp htmlhead content
 			with Date.Invalid_date ->
 				Error.invalid_date make_service sp
 		)
+		
+let make_todochooser make_service listservice chooserservice =
+	register chooserservice
+		(fun sp () () ->
+			let htmlhead = title (pcdata "Bitte Tag auswählen") in
+			let content =
+				[
+					h1 [pcdata "Bitte Tag auswählen"];
+					Scripts.choose_date listservice sp
+				]
+			in
+			make_service sp htmlhead content
+		)
+	
 			
