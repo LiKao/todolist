@@ -1,14 +1,9 @@
 function IsLeapyear(year) {
-  if (year%4 == 0 ){
-    return true;
-  }
-  else {
-    return false;
-  }
+  return (year%4 == 0);
 }
  
 function DaysOfMonth(month,year) {
-  leapyear = IsLeapyear(month);
+  var leapyear = IsLeapyear(year);
   var days = new Array();
   days[0] = 0;
   days[1] = 31
