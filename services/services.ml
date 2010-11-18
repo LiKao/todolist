@@ -13,7 +13,7 @@ let scripts sp =
 let make_page sp navigation htmlhead content =
 	return (
 		html 
-		(head htmlhead []) 
+		(head htmlhead [css_link ~uri:(make_uri ~service:(static_dir sp) ~sp ["styles";"style.css"]) ()]) 
 		(body
 			[div_with_id "scripts" (scripts sp);
 			 div_with_id "navigation" (navigation sp); 

@@ -1,0 +1,12 @@
+div#navigation {
+  font-size: 0.91em;
+  float: left; width: 10em;
+  margin: 0; padding: 0;
+  border-right: 1px dashed silver;
+}
+
+div#content {
+  margin-left: 11em;
+  padding: 0 1em;
+  min-width: 16em;
+}
