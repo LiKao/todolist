@@ -81,3 +81,8 @@ let register_all db =
 	Listservice.make_todochooser make_service listservice chooserservice;
 	Editservice.make make_service editservice db
 	
+let at_exit command =	
+	let hook () = return () >|= command in
+	Lwt_main.at_exit hook
+	
+	
