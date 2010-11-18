@@ -25,3 +25,38 @@ function DaysOfMonth(month,year) {
   days[12] = 31;
   return days[month];
 }
+
+function WriteCalendar(element,days,startday,callback) {
+  var content = "<table><tr> <th>Mo</th> <th>Di</th> <th>Mi</th> <th>Do</th> <th>Fr</th> <th>Sa</th> <th>So</th>"
+  
+  startday = (startday + 6) % 7;
+  var j = 0;
+  for (i=0;i<startday;i++){
+    if(j%7==0) {
+      content = content + "</tr><tr>";
+    }
+    j++;
+    content = content + "<td></td>";
+    
+  }
+  
+  for(i=1;i<=days;i++) {
+    if(j%7==0) {
+      content = content + "</tr><tr>";
+    }
+    j++;
+    content = content + "<td><div id=\"calendarday" + i + "\">" + i + "</div>";  
+  }
+  content = content + "</tr></table>";
+  element.innerHTML = content;
+  
+  function handler() {
+    var c = this.innerHTML;
+    callback(parseInt(c));
+  }
+  for(i=1;i<=days;i++){
+    var id = "calendarday" + i;
+    var cell = document.getElementById(id);
+    cell.onclick = handler;
+  }
+}

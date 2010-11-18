@@ -23,22 +23,32 @@ let choose_date service sp =
 	in
 	let date  = Date.get_today () in
 	let year  = Date.get_year date in
-	let month =  Date.get_month date |> Date.int_of_month in
+	let month =  (Date.get_month date |> Date.int_of_month) +1 in
 	let day   = Date.get_day date in
 	div ~a:[a_class ["datechooser"]]
 	[
+		div ~a:[a_id "calendar"] [];
 		Eliom_predefmod.Xhtml.get_form service sp form;
 		js_script 
 			"
+			 var defaultyear = %i;
+			 var year_selection = document.getElementById('year');
+			 var month_selection = document.getElementById('month');
+			 var day_selection = document.getElementById('day');
+			
 			 function SetDate(year,month,day) {
-			  var year_selection  = document.getElementById('year');
-			  var month_selection = document.getElementById('month');
-				var day_selection   = document.getElementById('day');
-				
+		
 				var days = DaysOfMonth(month,year);
 				if (day>days) {
 					day=days;
 				}
+				
+				var calendar = document.getElementById('calendar');
+				var date = new Date(year,month-1,1);
+				function callback(day) {
+					SetDate(year,month,day);
+				}
+				WriteCalendar(calendar,days,date.getDay(),callback);
 				
 				day_selection.options.length=0;
 				
@@ -61,24 +71,35 @@ let choose_date service sp =
 				year_selection.value = year;
 				month_selection.value = month;
 				day_selection.value = day;
+				
+				var calendarCellId = \"calendarday\" + day;
+				var calendarCell = document.getElementById(calendarCellId);
+				calendarCell.className = \"selected\";
 			 }
 			
 			 function SetDaysOfMonth() {
-			  var year_selection = document.getElementById('year');
+			  
 				var year = year_selection.value;
-				var month_selection = document.getElementById('month');
 				var month = month_selection.value;
-				var day_selection = document.getElementById('day');
 				var day = day_selection.value;
 				
 				SetDate(year,month,day);
 			 }
 			 
+			 function VerifyYear() {
+				var year = year_selection.value; 
+				var pattern = /^\\d+$/;
+				if(!year.match(pattern)) {
+					year_selection.value = defaultyear;
+				}
+				SetDaysOfMonth();
+			 }
 			
 			 window.onload=function(){
-				SetDate(%i,%i,%i);
-				document.getElementById('month').onchange=SetDaysOfMonth;
-				document.getElementById('year').onchange=SetDaysOfMonth;
+				SetDate(defaultyear,%i,%i);
+				month_selection.onchange=SetDaysOfMonth;
+				year_selection.onchange=VerifyYear;
+				day_selection.onchange=SetDaysOfMonth;
 			 }
 		" year month day
 	]

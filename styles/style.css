@@ -10,3 +10,7 @@ div#content {
   padding: 0 1em;
   min-width: 16em;
 }
+
+div.selected {
+  background-color:#b0c4de;
+}
