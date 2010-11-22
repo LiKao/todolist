@@ -10,3 +10,5 @@
 <**/*.annot>: not_hygienic
 <services>: include
 <services/*.ml>: ocaml, pkg_ocsigen, thread, annot
+<services/actions>: include
+<services/actions/*.ml>: ocaml, pkg_ocsigen, thread, annot
