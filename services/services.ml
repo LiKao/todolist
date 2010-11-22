@@ -79,7 +79,8 @@ let make_service sp htmlhead content =
 let register_all db =
 	Listservice.make_daylist make_service listservice db;
 	Listservice.make_todochooser make_service listservice chooserservice;
-	Editservice.make make_service editservice db
+	Editservice.make make_service editservice db;
+	Todoactions.make_doneaction make_service
 	
 let at_exit command =	
 	let hook () = return () >|= command in

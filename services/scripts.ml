@@ -104,5 +104,38 @@ let choose_date service sp =
 		" year month day
 	]
 	
-	
+let todo_editor todos =
+	let ids = 
+		List.map Todo.get_id todos |> 
+		Array.of_list |> 
+		Array.mapi (fun int id -> Printf.sprintf "todos[%i]=%i;\n" int id) |> 
+	  Array.fold_left (^) "" in
+	js_script
+	"
+		var todos = new Array();
+		%s
+		
+	  function Make_done(id) {
+			var request = new XMLHttpRequest();
+			request.open(\"POST\",\"../../../../action/close\");
+			request.setRequestHeader(\"Content-type\", \"application/x-www-form-urlencoded\");
+			request.send(id);
+		}
+		
+		function Add_button(id) {
+			var row = document.getElementById(\"todo\" + id);
+			row.innerHTML = row.innerHTML + \"<td><div id=\\\"donebox\" + id + \"\\\"><input type=\\\"checkbox\\\" /></div></td>\";
+			
+			var donebox = document.getElementById(\"donebox\" + id);
+			donebox.onclick = function() {
+				Make_done(id);
+			}
+		}
+		
+		window.onload=function(){
+			for(i=0;i<todos.length;i++){
+				Add_button(todos[i]);
+			}
+		}
+	" ids
 	

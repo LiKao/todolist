@@ -11,10 +11,8 @@ let make make_service editservice db =
 			let todos = Tododb.get_open db in
 			let htmlhead = title (pcdata "Todos bearbeiten") in
 			let content =
-				[
-					h1 [pcdata "Todos bearbeiten:"];
-					Common.todo_table todos
-				]
+				[h1 [pcdata "Todos bearbeiten:"]]
+				@ (Common.todo_table todos)
 			in  
 			make_service sp htmlhead content
 		)

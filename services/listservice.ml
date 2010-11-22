@@ -5,9 +5,12 @@ open Eliom_parameters
 open Eliom_sessions
 open Eliom_predefmod.Xhtml
 
+open Common
+
 let show_todos db date =
 	let active_todos = Tododb.get_active db date in
-	Common.todo_table active_todos
+	let script = Scripts.todo_editor active_todos in
+	(Common.todo_table active_todos) @ [script]
 		
 let make_daylist make_service listservice db = 
 	register listservice
@@ -18,12 +21,8 @@ let make_daylist make_service listservice db =
 				let titlestring = Printf.sprintf "Todos für %s" datestring in
 				let htmlhead = title (pcdata titlestring) in
 				let content =
-					[
-						h1 [pcdata titlestring];
-						show_todos db date;
-						(*br ();
-						Scripts.choose_date listservice sp*)
-					]
+					[h1 [pcdata titlestring]]
+					@ (show_todos db date)
 				in  
 				make_service sp htmlhead content
 			with Date.Invalid_date ->

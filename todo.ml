@@ -78,6 +78,9 @@ let get_duetime todo =
 let get_subject todo =
 	todo.subject
 
+let get_id todo =
+	todo.id
+
 (** Todo manipulations **)
 
 let make_open name duetime id = {duetime = duetime;subject=name;id=id}

@@ -12,13 +12,14 @@ let todo_table todos =
 	let printer todo =  
 		let subject = Todo.get_subject todo in
 		let duetime = Todo.string_of_todotime (Todo.get_duetime todo) in
-		Basic_Tables.tr 
+		let id = string_of_int (Todo.get_id todo) in
+		Basic_Tables.tr ~a:[a_id ("todo" ^ id)] 
 					(Basic_Tables.td [div_with_class "todosubject" [pcdata subject]]) 
 					[Basic_Tables.td [div_with_class "todotime"    [pcdata duetime]]]
 	in  
-	Basic_Tables.table 
+	[Basic_Tables.table 
 		(Basic_Tables.tr 
 			(Basic_Tables.td [div_with_class "tableheader" [pcdata "Betreff"]]) 
 			[Basic_Tables.td [div_with_class "tableheader" [pcdata "Datum"]]]
 		) 
-		(List.map printer todos) 
+		(List.map printer todos)] 
