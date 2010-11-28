@@ -1,5 +1,3 @@
-TYPE_CONV_PATH "Range"
-
 open Sexplib
 
 module type Rangetype =

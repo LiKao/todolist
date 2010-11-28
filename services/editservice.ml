@@ -8,11 +8,11 @@ open Eliom_predefmod.Xhtml
 let make make_service editservice db = 
 	register editservice
 		(fun sp () () ->
-			let todos = Tododb.get_open db in
-			let htmlhead = title (pcdata "Todos bearbeiten") in
-			let content =
+		 (Tododb.get_open db) >>= fun todos ->
+		 let htmlhead = title (pcdata "Todos bearbeiten") in
+		 return (
 				[h1 [pcdata "Todos bearbeiten:"]]
-				@ (Common.todo_table todos)
-			in  
-			make_service sp htmlhead content
+				@ (Common.todo_table todos))
+     	 >>= fun content ->
+		 make_service sp htmlhead content
 		)

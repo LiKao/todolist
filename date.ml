@@ -1,5 +1,3 @@
-TYPE_CONV_PATH "Date"
-
 open Helpers
 
 (** Exceptions **)
@@ -8,7 +6,7 @@ exception Invalid_date
 
 (** Years **)
 
-type year = int with sexp
+type year = int
 
 let is_leapyear year =
 	(year mod 1000) = 0 || ((year mod 4) = 0 && (year mod 100) !=0) 
@@ -27,7 +25,6 @@ type month = January
 					 | Oktober
 					 | November
 					 | December 
-					 with sexp 
 					
 let int_of_month = 
 	function
@@ -76,18 +73,18 @@ let days_of_month month year =
 	|	December -> 31 	
 
 let months = [|
-			January;
-      February;
-		  March;
-			April;
-		  May;
-			June;
-			July;
-			August;
-			September;
-			Oktober;
-			November;
-			December|]
+		January;
+      	February;
+		March;
+		April;
+		May;
+		June;
+		July;
+		August;
+		September;
+		Oktober;
+		November;
+		December|]
 			
 let next_month month = 
 	let monthnum = int_of_month month in
@@ -104,7 +101,7 @@ let compare_month month1 month2 =
 
 (** Days in a month **)
 			
-type dayofmonth = int with sexp					
+type dayofmonth = int					
 						
 (** Weekdays **)						
 																		
@@ -116,7 +113,6 @@ type weekday =
 	| Thursday
 	| Friday
 	| Saturday
-  with sexp
 
 let string_of_weekday = 
 	function
@@ -166,8 +162,8 @@ let is_weekend weekday =
 	
 type date = {month : month;
              day : dayofmonth;
-						 year : year}
-						with sexp
+			 year : year}
+
 						
 let date_of_ints year monthnum day =
 	if monthnum > 12 or monthnum < 1 then

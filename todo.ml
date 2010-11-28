@@ -1,5 +1,3 @@
-TYPE_CONV_PATH "Current.Module.Name"
-
 (** Types **)
 
 type repetition = 
@@ -8,28 +6,24 @@ type repetition =
 	| Monthly of Date.dayofmonth
 	| Weekdays
 	| Weekends
-	with sexp
 
 type todotime = 
 	| Repeated of repetition
-  | Single   of Date.date
-	with sexp
+ 	| Single   of Date.date
+
 	
 type t = 
 	{duetime : todotime;
-   subject : string;
+   	 subject : string;
 	 id : int}
-	with sexp
 	
 type close_state = 
 	| Closed     of Date.date
 	| Unfinished of Date.date
-	with sexp
 	
 type closed_t =
 	{todo  : t;
 	 state : close_state}
-	with sexp
 	
 (** Queries on Todos **)
 
