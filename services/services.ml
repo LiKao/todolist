@@ -79,8 +79,24 @@ let make_service sp htmlhead content =
 let register_all db =
 	Listservice.make_daylist make_service listservice db;
 	Listservice.make_todochooser make_service listservice chooserservice;
-	Editservice.make make_service editservice db;
-	Todoactions.make_doneaction make_service
+	Editservice.make make_service editservice db
+	
+let done_action = Todoactions.make_doneaction make_service
+	
+let _ = 
+	register_new_service
+	~path:["test"]
+	~get_params:unit
+	(fun sp () () ->
+		let form id_name = 
+			[p [int_input ~input_type:`Text ~name:id_name ()]]
+		in 
+		let f = Eliom_predefmod.Xhtml.get_form ~service:done_action ~sp:sp form in
+		return
+       (html
+         (head (title (pcdata "")) [])
+         (body [div [f]])))
+		
 	
 let at_exit command =	
 	let hook () = return () >|= command in

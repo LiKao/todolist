@@ -117,9 +117,8 @@ let todo_editor todos =
 		
 	  function Make_done(id) {
 			var request = new XMLHttpRequest();
-			request.open(\"POST\",\"../../../../action/close\");
-			request.setRequestHeader(\"Content-type\", \"application/x-www-form-urlencoded\");
-			request.send(id);
+			request.open(\"GET\",\"../../../../actions/close?id=\" + id);
+			request.send(null);
 		}
 		
 		function Add_button(id) {
