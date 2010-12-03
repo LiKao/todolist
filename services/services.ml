@@ -14,11 +14,11 @@ let make_page sp navigation htmlhead content =
 	return (
 		html 
 		(head htmlhead [css_link ~uri:(make_uri ~service:(static_dir sp) ~sp ["styles";"style.css"]) ()]) 
-		(body
-			[div_with_id "scripts" (scripts sp);
-			 div_with_id "navigation" (navigation sp); 
-		 	 div_with_id "content" content
-			]
+		(body (
+			[div_with_id "scripts" (scripts sp)] @
+			(navigation sp) @ 
+		 	[div_with_id "content" content]
+		)
 		)
 	)		
 						
@@ -44,34 +44,27 @@ let editservice =
 
 let navigation sp =
 	let today = Date.get_today () in
+	let todayservice = 
+		Eliom_services.preapply listservice 
+		  (Date.get_year today,(Date.get_monthnum today,Date.get_day today)) in
 	let tomorrow = Date.next_day today in
+	let tomorrowservice = 
+		Eliom_services.preapply listservice 
+		  (Date.get_year tomorrow,(Date.get_monthnum tomorrow,Date.get_day tomorrow)) in 
 	let yesterday = Date.previous_day today in
-	[ul ~a:[a_class ["level1"]]
-		(li [
-			div_with_class "li" 
-				[Eliom_predefmod.Xhtml.a chooserservice sp [pcdata "Todos"] ()];
-			ul ~a:[a_class ["level2"]]
-				(li [
-					div_with_class "li" 
-						[Eliom_predefmod.Xhtml.a listservice sp [pcdata "Heute"] (Date.get_year today,(Date.get_monthnum today,Date.get_day today))]
-					]
-				)
-				[li [
-					div_with_class "li" 
-						[Eliom_predefmod.Xhtml.a listservice sp [pcdata "Morgen"] (Date.get_year tomorrow,(Date.get_monthnum tomorrow,Date.get_day tomorrow))]
-					];
-				 li [
-					div_with_class "li" 
-						[Eliom_predefmod.Xhtml.a listservice sp [pcdata "Gestern"] (Date.get_year yesterday,(Date.get_monthnum yesterday,Date.get_day yesterday))]
-					];
-				]
-		])
-		[li [
-			div_with_class "li"
-				[Eliom_predefmod.Xhtml.a editservice sp [pcdata "Todos bearbeiten"] ()]
-			]
-		]
+	let yesterdayservice = 
+		Eliom_services.preapply listservice 
+			(Date.get_year yesterday,(Date.get_monthnum yesterday,Date.get_day yesterday)) in
+	let navbar = 
+   [Navigation.make_navitem "Todos" ~subs:[
+			Navigation.make_navitem "Heute"   ~target:(make_uri ~service:todayservice     ~sp ()) ();
+			Navigation.make_navitem "Morgen"  ~target:(make_uri ~service:tomorrowservice  ~sp ()) ();
+			Navigation.make_navitem "Gestern" ~target:(make_uri ~service:yesterdayservice ~sp ()) ();
+		] ();
+    Navigation.make_navitem "Todos bearbeiten" ~target:(make_uri ~service:editservice ~sp ()) ();
 	]
+	in
+	Navigation.make_navigation "navigation" navbar
 
 let make_service sp htmlhead content = 
 	make_page sp navigation	htmlhead content
@@ -83,26 +76,6 @@ let register_all db =
 	
 let done_action = Todoactions.make_doneaction make_service
 	
-let _ = 
-  register_new_service
-    ~path:["test"]
-    ~get_params:unit
-  (fun sp () () ->
-	 let today = Eliom_services.preapply listservice (3,(4,5)) in
-   let navbar = 
-   [Navigation.make_navitem "test" ~subs:[
-			Navigation.make_navitem "test2" ()] ();
-    Navigation.make_navitem "test3" ~target:(make_uri ~service:today ~sp ()) ();
-    Navigation.make_navitem "test4" ~subs:[
-			Navigation.make_navitem "test5" (); 
-			Navigation.make_navitem "test6" ()] ()
-	]
-    in
-    return
-      (html
-        (head (title (pcdata "")) [css_link ~uri:(make_uri ~service:(static_dir sp) ~sp ["styles";"style.css"]) ()])
-        (body (Navigation.make_navigation "test" navbar))))
-		
 	
 let at_exit command =	
 	let hook () = return () >|= command in
