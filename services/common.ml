@@ -1,4 +1,5 @@
 open XHTML.M
+open Eliom_predefmod.Xhtml
 
 let (|>) a f = 
 	f a
@@ -12,6 +13,11 @@ let linkordiv_with_class klass target ?(a = []) =
 	match target with
 	  Some target -> XHTML.M.a ~a:([a_href target; a_class [klass]] @ a)
 	| None -> div ~a:([a_class [klass]])
+
+
+let js_target ~funct ~sp ~service =
+	Printf.sprintf "javascript:%s('%s')" funct (make_string_uri ~service ~sp ()) |>
+	uri_of_string
 	
 	  
 let js_script_ext ~src =
