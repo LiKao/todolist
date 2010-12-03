@@ -1,12 +1,23 @@
 open XHTML.M
-open Eliom_predefmod.Xhtml
 
-let (|>) a f = f a
+let (|>) a f = 
+	f a
+
+let (@>|) (ls,item) f =
+	ls @ (f item)
 
 let div_with_class klass ?(a = []) l = div ~a:(a_class [klass] :: a) l
 let div_with_id id ?(a = []) l = div ~a:(a_id id :: a) l
+let linkordiv_with_class klass target =
+	match target with
+	  Some target -> a ~a:([a_href target; a_class [klass]])
+	| None -> div ~a:([a_class [klass]])
+	
+	  
 let js_script_ext ~src =
   script ~contenttype:"text/javascript" ~a:[a_src (uri_of_string src)] (pcdata "")
+	
+	
 
 let todo_table todos =
 	let printer todo =  

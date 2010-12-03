@@ -14,3 +14,7 @@ div#content {
 div.selected {
   background-color:#b0c4de;
 }
+
+a.navitem:hover {
+  background-color:#b0c4de;
+}

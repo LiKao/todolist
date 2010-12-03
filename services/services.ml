@@ -84,18 +84,24 @@ let register_all db =
 let done_action = Todoactions.make_doneaction make_service
 	
 let _ = 
-	register_new_service
-	~path:["test"]
-	~get_params:unit
-	(fun sp () () ->
-		let form id_name = 
-			[p [int_input ~input_type:`Text ~name:id_name ()]]
-		in 
-		let f = Eliom_predefmod.Xhtml.get_form ~service:done_action ~sp:sp form in
-		return
-       (html
-         (head (title (pcdata "")) [])
-         (body [div [f]])))
+  register_new_service
+    ~path:["test"]
+    ~get_params:unit
+  (fun sp () () ->
+	 let today = Eliom_services.preapply listservice (3,(4,5)) in
+   let navbar = 
+   [Navigation.make_navitem "test" ~subs:[
+			Navigation.make_navitem "test2" ()] ();
+    Navigation.make_navitem "test3" ~target:(make_uri ~service:today ~sp ()) ();
+    Navigation.make_navitem "test4" ~subs:[
+			Navigation.make_navitem "test5" (); 
+			Navigation.make_navitem "test6" ()] ()
+	]
+    in
+    return
+      (html
+        (head (title (pcdata "")) [css_link ~uri:(make_uri ~service:(static_dir sp) ~sp ["styles";"style.css"]) ()])
+        (body (Navigation.make_navigation "test" navbar))))
 		
 	
 let at_exit command =	
