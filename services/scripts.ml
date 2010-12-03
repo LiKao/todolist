@@ -137,11 +137,5 @@ let todo_editor todos =
 			}
 		}
 	" ids
-                                                       
-let navscript () =
-	[js_script "
-	function Mark() {
-		this.classname;
-	}"]
                                                                                       
 	

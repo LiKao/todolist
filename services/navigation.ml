@@ -22,10 +22,11 @@ let make_navitem title ?target ?(subs=[]) ()=
    subs=subs;
    target=target}
  
-let make_navigation id navbar =
+let make_navigation id target_id navbar =
   let rec make_listitem i navitem =
 		li ([
-	 		linkordiv_with_class "navitem" navitem.target [
+	 		linkordiv_with_class "navitem" navitem.target
+			[
   	 		pcdata navitem.title
     	] 
     ]	@ (enter (i+1) navitem.subs))
@@ -43,9 +44,7 @@ let make_navigation id navbar =
         (make_listitem i navitem) :: (loop i navitems)
     | [] -> []
   in
-	[div_with_id id (
-  	(enter 1 navbar) @ (Scripts.navscript ())
-	)]
+	[div_with_id id (enter 1 navbar)]
      
     
     

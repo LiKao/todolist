@@ -12,8 +12,8 @@ let show_todos db date =
 	let script = Scripts.todo_editor active_todos in
 	return ((Common.todo_table active_todos) @ [script])
 		
-let make_daylist make_service listservice db = 
-	register listservice
+let make_daylist listservice db = 
+	Eliom_predefmod.Blocks.register listservice
 		(fun sp (year,(month,day)) () ->
          	try 
 				let date = Date.date_of_ints year month day in
@@ -23,9 +23,9 @@ let make_daylist make_service listservice db =
             	show_todos db date >>= fun todotable ->
 				return ([h1 [pcdata titlestring]] @ (todotable)) 
 				>>= fun content ->
-				make_service sp htmlhead content
+				return content
 			with Date.Invalid_date ->
-				Error.invalid_date make_service sp
+				return [h1 [pcdata "error"]]
 		)
 		
 let make_todochooser make_service listservice chooserservice =

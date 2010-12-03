@@ -8,16 +8,19 @@ open Eliom_predefmod.Xhtml
 open Common
 
 let scripts sp =
-	[js_script ~uri:(make_uri ~service:(static_dir sp) ~sp ["scripts";"date.js"]) ()]
+	[js_script ~uri:(make_uri ~service:(static_dir sp) ~sp ["scripts";"date.js"]) ();
+	 js_script ~uri:(make_uri ~service:(static_dir sp) ~sp ["scripts";"navi.js"]) ()
+	] 
 
 let make_page sp navigation htmlhead content =
+	let content_name = "content" in
 	return (
 		html 
 		(head htmlhead [css_link ~uri:(make_uri ~service:(static_dir sp) ~sp ["styles";"style.css"]) ()]) 
 		(body (
 			[div_with_id "scripts" (scripts sp)] @
-			(navigation sp) @ 
-		 	[div_with_id "content" content]
+			(navigation content_name sp) @ 
+		 	[div_with_id content_name content]
 		)
 		)
 	)		
@@ -42,7 +45,7 @@ let editservice =
 	
 
 
-let navigation sp =
+let navigation target_id sp =
 	let today = Date.get_today () in
 	let todayservice = 
 		Eliom_services.preapply listservice 
@@ -57,20 +60,20 @@ let navigation sp =
 			(Date.get_year yesterday,(Date.get_monthnum yesterday,Date.get_day yesterday)) in
 	let navbar = 
    [Navigation.make_navitem "Todos" ~subs:[
-			Navigation.make_navitem "Heute"   ~target:(make_uri ~service:todayservice     ~sp ()) ();
-			Navigation.make_navitem "Morgen"  ~target:(make_uri ~service:tomorrowservice  ~sp ()) ();
-			Navigation.make_navitem "Gestern" ~target:(make_uri ~service:yesterdayservice ~sp ()) ();
+			Navigation.make_navitem "Heute"   ~target:(js_target ~funct:"ReLoad" ~service:todayservice     ~sp) ();
+			Navigation.make_navitem "Morgen"  ~target:(js_target ~funct:"ReLoad" ~service:tomorrowservice  ~sp) ();
+			Navigation.make_navitem "Gestern" ~target:(js_target ~funct:"ReLoad" ~service:yesterdayservice ~sp) ();
 		] ();
     Navigation.make_navitem "Todos bearbeiten" ~target:(make_uri ~service:editservice ~sp ()) ();
 	]
 	in
-	Navigation.make_navigation "navigation" navbar
+	Navigation.make_navigation "navigation" target_id navbar
 
 let make_service sp htmlhead content = 
 	make_page sp navigation	htmlhead content
 	
 let register_all db =
-	Listservice.make_daylist make_service listservice db;
+	Listservice.make_daylist listservice db;
 	Listservice.make_todochooser make_service listservice chooserservice;
 	Editservice.make make_service editservice db
 	
