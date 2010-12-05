@@ -10,6 +10,11 @@ type year = int
 
 let is_leapyear year =
 	(year mod 1000) = 0 || ((year mod 4) = 0 && (year mod 100) !=0) 
+	
+let xml_of_year year =
+	Printf.sprintf 
+	  "<year>%i</year>"
+		year
 
 (** Months **)
 
@@ -97,11 +102,25 @@ let previous_month month =
 let compare_month month1 month2 =
 	let monthnum1 = int_of_month month1 in
 	let monthnum2 = int_of_month month2 in
-	monthnum1-monthnum2	
-
+	monthnum1-monthnum2
+	
+let xml_of_month month =
+	Printf.sprintf 
+		"<month>
+			<number>%i</number>
+			<name>%s</name>
+		</month>"	
+	(int_of_month month)
+	(string_of_month month)
+	
 (** Days in a month **)
 			
-type dayofmonth = int					
+type dayofmonth = int			
+
+let xml_of_day day =
+	Printf.sprintf
+	  "<day>%i</day>"
+		day	
 						
 (** Weekdays **)						
 																		
@@ -158,6 +177,15 @@ let is_weekday =
 let is_weekend weekday =
 	not (is_weekday weekday)
 	
+let xml_of_weekday weekday =
+	Printf.sprintf 
+	  "<weekday>
+		  <number>%i</number>
+			<name>%s<name>
+		</weekday>"
+	(int_of_weekday weekday)
+	(string_of_weekday weekday)
+	
 (** complete dates (year,month and day) **)
 	
 type date = {month : month;
@@ -213,6 +241,16 @@ let string_of_date date =
 	let weekdaystring = string_of_weekday weekday in
 	let month   = string_of_month date.month in 
 	Printf.sprintf " %s %i. %s %i" weekdaystring date.day month date.year
+	
+let xml_of_date date =
+	Printf.sprintf 
+		"<date>
+		   %s%s%s%s
+		</date>"
+		(xml_of_day date.day)
+		(xml_of_month date.month)
+		(xml_of_year date.year)
+		(xml_of_weekday (get_weekday date))
 	
 let get_month date =
 	date.month

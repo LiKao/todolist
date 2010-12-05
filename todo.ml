@@ -14,7 +14,7 @@ type todotime =
 	
 type t = 
 	{duetime : todotime;
-   	 subject : string;
+   subject : string;
 	 id : int}
 	
 type close_state = 
@@ -24,7 +24,49 @@ type close_state =
 type closed_t =
 	{todo  : t;
 	 state : close_state}
-	
+
+(** Conversion from and to xml**)
+let xml_of_repetition repetition =
+	match repetition with
+		Daily -> 
+			"<dayly/>"
+	| Weekly weekday ->
+			Printf.sprintf 
+				"<weekly>%s</weekly>"
+				(Date.xml_of_weekday weekday)
+	| Monthly dayofmonth ->
+			Printf.sprintf
+				"<monthly>%i</monthly>"
+				dayofmonth
+	| Weekdays ->
+				"<Weekdays/>" 
+	| Weekends ->
+			"<Weekends/>"
+		
+
+let xml_of_duetime duetime =
+	match duetime with
+		Repeated repetition ->
+			Printf.sprintf 
+				"<repeated>%s</repeated>"
+				(xml_of_repetition repetition)
+	|  Single date ->
+			Printf.sprintf
+			"<single>%s</single>"
+			(Date.xml_of_date date)
+		
+
+let xml_of_t todo =
+		Printf.sprintf 
+			"<todo id=\"%i\">  
+			   <subject>%s</subject>
+			   <duetime>%s</duetime>
+			 </todo>
+				"
+			todo.id 
+			todo.subject 
+			(xml_of_duetime todo.duetime)
+			
 (** Queries on Todos **)
 
 let is_repeated todo =
