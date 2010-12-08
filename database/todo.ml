@@ -25,48 +25,6 @@ type closed_t =
 	{todo  : t;
 	 state : close_state}
 
-(** Conversion from and to xml**)
-let xml_of_repetition repetition =
-	match repetition with
-		Daily -> 
-			"<dayly/>"
-	| Weekly weekday ->
-			Printf.sprintf 
-				"<weekly>%s</weekly>"
-				(Date.xml_of_weekday weekday)
-	| Monthly dayofmonth ->
-			Printf.sprintf
-				"<monthly>%i</monthly>"
-				dayofmonth
-	| Weekdays ->
-				"<Weekdays/>" 
-	| Weekends ->
-			"<Weekends/>"
-		
-
-let xml_of_duetime duetime =
-	match duetime with
-		Repeated repetition ->
-			Printf.sprintf 
-				"<repeated>%s</repeated>"
-				(xml_of_repetition repetition)
-	|  Single date ->
-			Printf.sprintf
-			"<single>%s</single>"
-			(Date.xml_of_date date)
-		
-
-let xml_of_t todo =
-		Printf.sprintf 
-			"<todo id=\"%i\">  
-			   <subject>%s</subject>
-			   <duetime>%s</duetime>
-			 </todo>
-				"
-			todo.id 
-			todo.subject 
-			(xml_of_duetime todo.duetime)
-			
 (** Queries on Todos **)
 
 let is_repeated todo =
@@ -141,3 +99,49 @@ let string_of_todotime =
 
 let string_of_todo todo =
 	Printf.sprintf "%s\t %s" todo.subject (string_of_todotime todo.duetime)
+	
+(** Conversion from and to xml**)
+let xml_of_repetition repetition =
+	match repetition with
+		Daily -> Xml.Element ("daily",[],[])
+	| Weekly weekday -> Xml.Element ("weekly",[],[Date.xml_of_weekday weekday])
+	| Monthly dayofmonth -> Xml.Element ("monthly",[],[Xml.PCData (string_of_int dayofmonth)])
+	| Weekdays -> Xml.Element ("weekdays",[],[]) 
+	| Weekends -> Xml.Element ("weekends",[],[])
+		
+
+let xml_of_duetime duetime =
+	Xml.Element ("duetime",[],[
+		match duetime with
+			Repeated repetition -> Xml.Element ("repeated",[],[xml_of_repetition repetition])
+		|  Single date -> Xml.Element ("single",[],[Date.xml_of_date date])
+	])
+		
+let xmltododata todo =
+	[
+		Xml.Element ("subject",[],[Xml.PCData todo.subject]);
+		xml_of_duetime todo.duetime
+	]
+
+let xml_of_t todo =
+	Xml.Element ("todo",
+		[
+			("id",string_of_int todo.id);
+			("state","open")
+		], 
+		xmltododata todo)
+		
+let xml_of_closed_t closed =
+	let state,date =
+		match closed.state with
+			Closed date -> ("closed",date)
+		| Unfinished date -> ("unfinished",date)
+	in
+	Xml.Element ("todo",
+		[
+			("id",string_of_int closed.todo.id);
+		  ("state",state)
+		],
+		[Date.xml_of_date date] 
+		@ (xmltododata closed.todo))
+			

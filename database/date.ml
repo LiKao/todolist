@@ -1,4 +1,5 @@
 open Helpers
+open BatStd
 
 (** Exceptions **)
 
@@ -12,9 +13,7 @@ let is_leapyear year =
 	(year mod 1000) = 0 || ((year mod 4) = 0 && (year mod 100) !=0) 
 	
 let xml_of_year year =
-	Printf.sprintf 
-	  "<year>%i</year>"
-		year
+	Xml.Element ("year",[],[Xml.PCData (string_of_int year)])
 
 (** Months **)
 
@@ -105,22 +104,19 @@ let compare_month month1 month2 =
 	monthnum1-monthnum2
 	
 let xml_of_month month =
-	Printf.sprintf 
-		"<month>
-			<number>%i</number>
-			<name>%s</name>
-		</month>"	
-	(int_of_month month)
-	(string_of_month month)
+	Xml.Element ("month",[],
+		(Xmlhelpers.xml_of_named 
+			month 
+			"number" 
+			(int_of_month |- string_of_int) 
+			string_of_month))
 	
 (** Days in a month **)
 			
 type dayofmonth = int			
 
 let xml_of_day day =
-	Printf.sprintf
-	  "<day>%i</day>"
-		day	
+	Xml.Element ("day",[],[Xml.PCData (string_of_int day)])
 						
 (** Weekdays **)						
 																		
@@ -178,13 +174,12 @@ let is_weekend weekday =
 	not (is_weekday weekday)
 	
 let xml_of_weekday weekday =
-	Printf.sprintf 
-	  "<weekday>
-		  <number>%i</number>
-			<name>%s<name>
-		</weekday>"
-	(int_of_weekday weekday)
-	(string_of_weekday weekday)
+	Xml.Element ("weekday",[],
+		(Xmlhelpers.xml_of_named 
+			weekday 
+			"number"
+			(int_of_weekday |- string_of_int)
+			string_of_weekday)) 
 	
 (** complete dates (year,month and day) **)
 	
@@ -243,14 +238,11 @@ let string_of_date date =
 	Printf.sprintf " %s %i. %s %i" weekdaystring date.day month date.year
 	
 let xml_of_date date =
-	Printf.sprintf 
-		"<date>
-		   %s%s%s%s
-		</date>"
-		(xml_of_day date.day)
-		(xml_of_month date.month)
-		(xml_of_year date.year)
-		(xml_of_weekday (get_weekday date))
+	Xml.Element ("date",[],[
+		(xml_of_day date.day);
+		(xml_of_month date.month);
+		(xml_of_year date.year);
+		(xml_of_weekday (get_weekday date));])
 	
 let get_month date =
 	date.month

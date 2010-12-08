@@ -1,6 +1,9 @@
 type todolist = Todo.t list
 type closedlist = Todo.closed_t list
 
+let xml_of_todolist tdlist =
+	Xml.Element ("todolist",[],(List.map Todo.xml_of_t tdlist))
+
 type db_info = {mutable last_id : int}
 
 type t = 
