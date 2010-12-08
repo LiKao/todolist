@@ -1,13 +1,15 @@
 <**/*.ml> or <**/*.mli> or <**/*.mlpack> or <**/*.ml.depends>: ocaml, pkg_batteries, annot
-<**/*.cma>: ocaml, byte, library
-<**/*.cmxa>: ocaml, native, library
-<**/*.cmo>: ocaml, byte
-<**/*.cmi>: ocaml, byte, native
-<**/*.cmx>: ocaml, native
-<**/*.annot>: not_hygienic
-<services>: include
-<services/*.ml>: ocaml, pkg_ocsigen, thread, annot
-<services/pages>: include
-<services/pages/*.ml>: ocaml, pkg_ocsigen, thread, annot
-<services/actions>: include
-<services/actions/*.ml>: ocaml, pkg_ocsigen, thread, annot
+<**/*.cma>: 				ocaml, byte, library
+<**/*.cmxa>: 				ocaml, native, library
+<**/*.cmo>: 				ocaml, byte
+<**/*.cmi>: 				ocaml, byte, native
+<**/*.cmx>: 				ocaml, native
+<**/*.annot>: 				not_hygienic
+<database>:					include
+<database/*.ml>: 			ocaml, pkg_batteries, pkg_xml-light, annot
+<services>: 				include
+<services/*.ml>: 			ocaml, pkg_batteries, pkg_ocsigen, thread, annot
+<services/pages>: 			include
+<services/pages/*.ml>: 		ocaml, pkg_batteries, pkg_ocsigen, thread, annot
+<services/actions>: 		include
+<services/actions/*.ml>: 	ocaml, pkg_batteries, pkg_ocsigen, thread, annot
