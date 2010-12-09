@@ -113,7 +113,13 @@ let xml_of_month month =
 	
 (** Days in a month **)
 			
-type dayofmonth = int			
+type dayofmonth = int
+
+let dayofmonth_spec =
+	Xml.Element ("intrange",[
+		("min","1");
+		("max","31")
+	],[])
 
 let xml_of_day day =
 	Xml.Element ("day",[],[Xml.PCData (string_of_int day)])
@@ -139,7 +145,6 @@ let string_of_weekday =
 	|	Friday    -> "Freitag"
 	|	Saturday  -> "Samstag"
 
-
 let int_of_weekday =
 	function
 	|	Sunday    -> 0
@@ -149,6 +154,26 @@ let int_of_weekday =
 	|	Thursday  -> 4
 	|	Friday    -> 5
 	|	Saturday  -> 6
+
+let weekday_spec =
+	let make_entry weekday =
+		Xml.Element ("variant_entry",[
+				("name",string_of_weekday weekday);
+				("fieldname","number")
+			],[
+				Xml.PCData (weekday |> int_of_weekday |> string_of_int) 
+		])
+	in
+	Xml.Element ("variant",[("fieldname","weekday")],[
+		make_entry Sunday;
+		make_entry Monday;
+		make_entry Tuesday;
+		make_entry Wednesday;
+		make_entry Thursday;
+		make_entry Friday;
+		make_entry Saturday
+	])
+		
 	 
 	
 let weekdays = [|
@@ -186,7 +211,8 @@ let xml_of_weekday weekday =
 type date = {month : month;
              day : dayofmonth;
 			 year : year}
-
+			
+let date_spec = Xml.Element ("date",[],[])
 						
 let date_of_ints year monthnum day =
 	if monthnum > 12 or monthnum < 1 then

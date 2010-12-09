@@ -13,3 +13,5 @@
 <services/pages/*.ml>: 		ocaml, pkg_batteries, pkg_ocsigen, thread, annot
 <services/actions>: 		include
 <services/actions/*.ml>: 	ocaml, pkg_batteries, pkg_ocsigen, thread, annot
+<services/api>:				include
+<services/api/*.ml>:		ocaml, pkg_batteries, pkg_ocsigen, pkg_xml-light, thread, annot

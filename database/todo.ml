@@ -7,15 +7,77 @@ type repetition =
 	| Weekdays
 	| Weekends
 
+let repetition_spec = 
+	Xml.Element ("variant",[("fieldname","repetition")],[
+		Xml.Element ("variant_entry",[
+				("name","täglich");
+				("fieldname","daily")
+			],[
+				(*empty*)
+		]);
+		Xml.Element ("variant_entry",[
+				("name","täglich");
+				("fieldname","weekly")
+			],[
+				Date.weekday_spec	
+			]);
+		Xml.Element ("variant_entry",[
+				("name","monatlich");
+				("fieldname","monthly");
+			],[
+				Date.dayofmonth_spec
+		]);
+		Xml.Element ("variant_entry",[
+				("name","wochentags");
+				("fieldname","weekdays");
+			],[
+				(*empty*)
+		]);
+		Xml.Element ("variant_entry",[
+				("name","am Wochenende");
+				("fieldname","weekends")
+			],[
+				(*empty*)
+		]);
+	])
+
 type todotime = 
 	| Repeated of repetition
  	| Single   of Date.date
 
-	
+let todotime_spec =
+	Xml.Element ("variant",[("fieldname","duetime")],[
+		Xml.Element ("variant_entry",[
+				("name","wiederholt");
+				("fieldname","repeated")
+			],[
+				repetition_spec
+		]);
+		Xml.Element ("variant_entry",[
+				("name","einzeln");
+				("fieldname","single")
+			],[
+				Date.date_spec
+		])
+	])
+		
 type t = 
 	{duetime : todotime;
    subject : string;
 	 id : int}
+	
+let t_spec =
+	Xml.Element ("record",[],[
+		Xml.Element ("record_field",[],[
+				Xml.Element ("value",[
+					("type","string");
+					("fieldname","subject")
+				],[])
+		]);
+		Xml.Element ("record_field",[],[
+			todotime_spec
+		])
+	])
 	
 type close_state = 
 	| Closed     of Date.date

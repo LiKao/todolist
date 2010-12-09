@@ -37,4 +37,7 @@ let todo_table todos =
 			(Basic_Tables.td [div_with_class "tableheader" [pcdata "Betreff"]]) 
 			[Basic_Tables.td [div_with_class "tableheader" [pcdata "Datum"]]]
 		) 
-		(List.map printer todos)] 
+		(List.map printer todos)]
+		
+let return_xml xml =
+	Lwt.return (xml,"text/xml")
