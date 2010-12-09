@@ -12,7 +12,7 @@ let make db =
 		~path:["spec";"todo"]
 		~get_params:unit
 		(fun sp () () ->
-			Todo.t_spec |>
+			Xml.Element ("spec",[],[Todo.t_spec]) |>
 			Xml.to_string_fmt |>
 			return_xml
 	 )
