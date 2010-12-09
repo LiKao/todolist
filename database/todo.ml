@@ -69,7 +69,7 @@ type t =
 let t_spec =
 	Xml.Element ("record",[],[
 		Xml.Element ("record_field",[],[
-				Xml.Element ("value",[
+				Xml.Element ("input",[
 					("type","string");
 					("fieldname","subject")
 				],[])
