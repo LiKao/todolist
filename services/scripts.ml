@@ -137,5 +137,21 @@ let todo_editor todos =
 			}
 		}
 	" ids
+	
+let input_field =
+	js_script 
+	"
+		var id = \"%s\";
+		var url = \"%s\";
+		
+		window.onload=function(){
+			var request = new XMLHttpRequest();
+			request.open(\"GET\",url,false);
+			request.send();
+			
+			var element = document.getElementById(id);
+			Make_Form(element,request.responseXML);
+		}
+	" 
                                                                                       
 	
