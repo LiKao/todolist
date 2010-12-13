@@ -15,7 +15,6 @@ function Make_Form(element,xml) {
 }
 
 function Make_All(element,spec) {
-  alert("found node with name: " + spec.nodeName);
   switch(spec.nodeName) {
     case "record":
       return Make_Record(element,spec);
@@ -50,6 +49,10 @@ function Make_Variant(element,xml) {
   
   var selectElement = document.createElement("select");
   variantElement.appendChild(selectElement);
+  
+  var entryData = document.createElement("div");
+  entryData.className = "entryData";
+  variantElement.appendChild(entryData);
 	
   var children = xml.childNodes;
   for(var i=0; i<children.length; i++) {
@@ -59,6 +62,20 @@ function Make_Variant(element,xml) {
       selectElement.add(variantEntry); 
     }
   }
+  
+  var entry = selectElement.options[selectElement.selectedIndex];
+  var entryNum = entry.value;
+  if(children[entryNum].childNodes.length > 0)
+  	sub_html = Make_All(entryData,skiptext(children[entryNum]));
+  
+  selectElement.onchange = function () {
+  	entryData.innerHTML = "";
+    var entry = this.options[this.selectedIndex];
+    var entryNum = entry.value;
+    if (children[entryNum].childNodes.length > 0)
+      sub_html = Make_All(entryData,skiptext(children[entryNum]));
+  }
+  
   return variantElement;
 }
 
