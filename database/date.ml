@@ -161,7 +161,10 @@ let weekday_spec =
 				("name",string_of_weekday weekday);
 				("fieldname","number")
 			],[
-				Xml.PCData (weekday |> int_of_weekday |> string_of_int) 
+				Xml.Element ("value",[
+					],[
+						Xml.PCData (weekday |> int_of_weekday |> string_of_int)
+				]) 
 		])
 	in
 	Xml.Element ("variant",[("fieldname","weekday")],[

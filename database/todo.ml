@@ -16,7 +16,7 @@ let repetition_spec =
 				(*empty*)
 		]);
 		Xml.Element ("variant_entry",[
-				("name","täglich");
+				("name","wöchentlich");
 				("fieldname","weekly")
 			],[
 				Date.weekday_spec	
