@@ -150,7 +150,7 @@ let input_field =
 			request.send();
 			
 			var element = document.getElementById(id);
-			Make_Form(element,request.responseXML);
+			new formCreator(element,request.responseXML);
 		}
 	" 
                                                                                       

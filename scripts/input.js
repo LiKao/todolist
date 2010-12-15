@@ -4,89 +4,179 @@ function skiptext(xml) {
   return xml.childNodes[i];
 }
 
-function Make_Form(element,xml) {
+function formCreator(element,xml) {
+
   var formElement = document.createElement("form");
+  formElement.method = "post";
+  var xmlField = document.createElement("textarea");
+  formElement.appendChild(xmlField);
+  var submitButton = document.createElement("input");
+  submitButton.type = "submit";
+  submitButton.value = "Eintragen";
+  formElement.appendChild(submitButton);
+  var inputElement = document.createElement("div");
   element.innerHTML = "";
+  element.appendChild(inputElement);
   element.appendChild(formElement);
+
+  var responseDoc = document.implementation.createDocument("","response",null);
+  var s = new XMLSerializer();
+  
+  
+  /************************ update method *****************/
+  function update() {
+    xmlField.value = s.serializeToString(responseDoc);
+  }
+
+  function Make_All(element,spec,response) {
+    switch(spec.nodeName) {
+      case "record":
+        Make_Record(element,spec,response);
+        break;
+       case "variant":
+         Make_Variant(element,spec,response);
+         break;
+       case "input":
+         Make_Input(element,spec,response);
+         break;
+       case "intrange":
+         Make_Intrange(element,spec,response);
+         break;
+       case "value":
+         Make_Value(element,spec,response);
+         break;  
+    }		
+  }
+
+  /******************** Make_Record method *****************/
+  function Make_Record(element,spec,response) {
+    var recordElement = document.createElement("div");
+    recordElement.className = "record";
+    element.appendChild(recordElement);
+    
+    
+    var recordResponse = responseDoc.createElement(spec.getAttribute("fieldname"));
+    response.appendChild(recordResponse);
+    
+    var children = spec.childNodes;
+    for(var i=0; i<children.length; i++) {
+      if(children[i].nodeName == "record_field") {
+        /* Record fields only have one child */
+        Make_All(recordElement,skiptext(children[i]),recordResponse);
+      }
+    }
+  }
+  
+  /******************** Make_Variant method *****************/
+  function Make_Variant(element,spec,response) {
+    var variantElement = document.createElement("div");
+    variantElement.className = "variant";
+    element.appendChild(variantElement);
+    
+    var selectElement = document.createElement("select");
+    variantElement.appendChild(selectElement);
+    
+    var entryData = document.createElement("div");
+    entryData.className = "entryData";
+    variantElement.appendChild(entryData);
+    
+    var variantResponse = responseDoc.createElement(spec.getAttribute("fieldname"));
+    response.appendChild(variantResponse);
+  	
+    var children = spec.childNodes;
+    for(var i=0; i<children.length; i++) {
+      if(children[i].nodeName == "variant_entry") {
+        var name = children[i].getAttribute("name");
+        var variantEntry = new Option(name,i);
+        selectElement.add(variantEntry); 
+      }
+    }
+    
+    var entry = selectElement.options[selectElement.selectedIndex];
+    var entryNum = entry.value;
+    var entryNode = responseDoc.createElement(children[entryNum].getAttribute("fieldname"));
+    variantResponse.appendChild(entryNode);
+    if(children[entryNum].childNodes.length > 0) {
+  	  sub_html = Make_All(entryData,skiptext(children[entryNum]),entryNode);
+  	}
+    
+    selectElement.onchange = function () {
+  	  entryData.innerHTML = "";
+      var entry = this.options[this.selectedIndex];
+      var entryNum = entry.value;
+      
+      variantResponse.removeChild(entryNode);
+      entryNode = responseDoc.createElement(children[entryNum].getAttribute("fieldname"));
+      variantResponse.appendChild(entryNode);
+      
+      if (children[entryNum].childNodes.length > 0)
+        sub_html = Make_All(entryData,skiptext(children[entryNum]),entryNode);
+      update();
+    }
+  }
+  
+  
+  /******************** Make_Input method *****************/
+  function Make_Input(element,spec,response) {
+    var inputElement = document.createElement("div");
+    inputElement.className = "input";
+    element.appendChild(inputElement);
+    
+    var textElement = document.createElement("input");
+    textElement.type = "text";
+    inputElement.appendChild(textElement);
+    
+    var textResponse = responseDoc.createElement(spec.getAttribute("fieldname"));
+    response.appendChild(textResponse);
+    var textValue = responseDoc.createTextNode(textElement.value);
+    textResponse.appendChild(textValue);
+    
+    textElement.onchange = function() {
+      textValue.nodeValue = this.value;
+      update();
+    }
+  }
+  
+  /******************** Make_Intrange method *****************/
+  function Make_Intrange(element,spec,response) {
+    var min = spec.getAttribute("min");
+    var max = spec.getAttribute("max");
+    
+    var intrangeElement = document.createElement("div");
+    intrangeElement.className = "intrange";
+    element.appendChild(intrangeElement);
+    
+    var selectElement = document.createElement("select");
+    intrangeElement.appendChild(selectElement);
+    for(var i = min; i<=max; i++) {
+      var opt = new Option(i,i);
+      selectElement.add(opt);
+    }
+    
+    var intrangeResponse = responseDoc.createElement(spec.getAttribute("fieldname"));
+    response.appendChild(intrangeResponse);
+    var intrangeResponseText = responseDoc.createTextNode(min);
+    intrangeResponse.appendChild(intrangeResponseText);
+    
+    selectElement.onchange = function() {
+      intrangeResponseText.nodeValue = this.options[this.selectedIndex].value;
+      update();
+    }
+  }
+  
+  /******************** Make_Value method *****************/
+  function Make_Value(element,spec,response) {
+    response.appendChild(spec.childNodes[0].cloneNode(true));
+  }
+ 
   var spec = xml.childNodes[0];
   if(spec.nodeName=="spec"){
-  	Make_All(formElement,skiptext(spec));
-  }
-}
-
-function Make_All(element,spec) {
-  switch(spec.nodeName) {
-    case "record":
-      return Make_Record(element,spec);
-      break;
-     case "variant":
-       return Make_Variant(element,spec);
-       break;
-     case "input":
-       return Make_Input(element,spec);
-       break;
-   }		
-}
-
-function Make_Record(element,xml) {
-  var recordElement = document.createElement("div");
-  recordElement.className = "record";
-  element.appendChild(recordElement);
-  var children = xml.childNodes;
-  for(var i=0; i<children.length; i++) {
-    if(children[i].nodeName == "record_field") {
-      /* Record fields only have one child */
-      Make_All(recordElement,skiptext(children[i]));
-    }
-  }
-  return recordElement;
-}
-
-function Make_Variant(element,xml) {
-  var variantElement = document.createElement("div");
-  variantElement.className = "variant";
-  element.appendChild(variantElement);
-  
-  var selectElement = document.createElement("select");
-  variantElement.appendChild(selectElement);
-  
-  var entryData = document.createElement("div");
-  entryData.className = "entryData";
-  variantElement.appendChild(entryData);
-	
-  var children = xml.childNodes;
-  for(var i=0; i<children.length; i++) {
-    if(children[i].nodeName == "variant_entry") {
-      var name = children[i].getAttribute("name");
-      var variantEntry = new Option(name,i);
-      selectElement.add(variantEntry); 
-    }
+    Make_All(inputElement,skiptext(spec),skiptext(responseDoc));
   }
   
-  var entry = selectElement.options[selectElement.selectedIndex];
-  var entryNum = entry.value;
-  if(children[entryNum].childNodes.length > 0)
-  	sub_html = Make_All(entryData,skiptext(children[entryNum]));
+  update(); 	      
   
-  selectElement.onchange = function () {
-  	entryData.innerHTML = "";
-    var entry = this.options[this.selectedIndex];
-    var entryNum = entry.value;
-    if (children[entryNum].childNodes.length > 0)
-      sub_html = Make_All(entryData,skiptext(children[entryNum]));
-  }
-  
-  return variantElement;
 }
 
-function Make_Input(element,xml) {
-  var inputElement = document.createElement("div");
-  inputElement.className = "input";
-  element.appendChild(inputElement);
-  
-  var textElement = document.createElement("input");
-  textElement.type = "text";
-  inputElement.appendChild(textElement);
-  
-  return inputElement;
-}
+
+
