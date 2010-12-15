@@ -67,16 +67,18 @@ type t =
 	 id : int}
 	
 let t_spec =
-	Xml.Element ("record",[],[
-		Xml.Element ("record_field",[],[
+	Xml.Element ("record",[
+			("fieldname","todo")
+		],[
+			Xml.Element ("record_field",[],[
 				Xml.Element ("input",[
 					("type","string");
 					("fieldname","subject")
 				],[])
-		]);
-		Xml.Element ("record_field",[],[
-			todotime_spec
-		])
+			]);
+			Xml.Element ("record_field",[],[
+				todotime_spec
+			])
 	])
 	
 type close_state = 
