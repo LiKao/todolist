@@ -117,6 +117,7 @@ type dayofmonth = int
 
 let dayofmonth_spec =
 	Xml.Element ("intrange",[
+		("fieldname","day");
 		("min","1");
 		("max","31")
 	],[])
