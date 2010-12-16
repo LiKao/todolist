@@ -4,10 +4,11 @@ function skiptext(xml) {
   return xml.childNodes[i];
 }
 
-function formCreator(element,xml) {
+function formCreator(element,xml,target) {
 
   var formElement = document.createElement("form");
   formElement.method = "post";
+  formElement.action = target;
   var xmlField = document.createElement("textarea");
   formElement.appendChild(xmlField);
   var submitButton = document.createElement("input");
@@ -45,6 +46,8 @@ function formCreator(element,xml) {
        case "value":
          Make_Value(element,spec,response);
          break;  
+       case "date":
+         Make_Date(element,spec,response);
     }		
   }
 
@@ -162,6 +165,38 @@ function formCreator(element,xml) {
       intrangeResponseText.nodeValue = this.options[this.selectedIndex].value;
       update();
     }
+  }
+  
+  /****************** Make_Date method ****************/
+  function Make_Date(element,spec,response) {
+    var dateElement = document.createElement("div");
+    dateElement.className = "date";
+    var calendarObj = new Calendar(dateElement, new Date(),true);
+    element.appendChild(dateElement);
+    
+    var yearNode = responseDoc.createElement("year");
+    var yearText = responseDoc.createTextNode(calendarObj.getDate().getFullYear());
+    yearNode.appendChild(yearText);
+    var monthNode = responseDoc.createElement("month");
+    var monthText = responseDoc.createTextNode(calendarObj.getDate().getMonth());
+    monthNode.appendChild(monthText);
+    var dayNode =  responseDoc.createElement("day");
+    var dayText = responseDoc.createTextNode(calendarObj.getDate().getDate());
+    dayNode.appendChild(dayText);
+    var dateResponse = responseDoc.createElement("date");
+    dateResponse.appendChild(yearNode);
+    dateResponse.appendChild(monthNode);
+    dateResponse.appendChild(dayNode);
+    response.appendChild(dateResponse);
+        
+    calendarObj.onchange = function(){
+      yearText.nodeValue = calendarObj.getDate().getFullYear();
+      monthText.nodeValue = calendarObj.getDate().getMonth();
+      dayText.nodeValue = calendarObj.getDate().getDate();
+      update();
+    };
+    
+    update();
   }
   
   /******************** Make_Value method *****************/

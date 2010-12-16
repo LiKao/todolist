@@ -138,20 +138,17 @@ let todo_editor todos =
 		}
 	" ids
 	
-let input_field =
+let input_field id url target =
 	js_script 
 	"
-		var id = \"%s\";
-		var url = \"%s\";
-		
 		window.onload=function(){
 			var request = new XMLHttpRequest();
-			request.open(\"GET\",url,false);
+			request.open(\"GET\",\"%s\",false);
 			request.send();
 			
-			var element = document.getElementById(id);
-			new formCreator(element,request.responseXML);
+			var element = document.getElementById(\"%s\");
+			new formCreator(element,request.responseXML,\"%s\");
 		}
-	" 
+	" url id target
                                                                                       
 	
