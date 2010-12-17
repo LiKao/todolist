@@ -4,12 +4,13 @@ function skiptext(xml) {
   return xml.childNodes[i];
 }
 
-function formCreator(element,xml,target) {
+function formCreator(element,xml,target,name) {
 
   var formElement = document.createElement("form");
   formElement.method = "post";
   formElement.action = target;
   var xmlField = document.createElement("textarea");
+  xmlField.name = name;
   formElement.appendChild(xmlField);
   var submitButton = document.createElement("input");
   submitButton.type = "submit";

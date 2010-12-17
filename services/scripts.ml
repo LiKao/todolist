@@ -138,7 +138,7 @@ let todo_editor todos =
 		}
 	" ids
 	
-let input_field id url target =
+let input_field id url target name =
 	js_script 
 	"
 		window.onload=function(){
@@ -147,8 +147,8 @@ let input_field id url target =
 			request.send();
 			
 			var element = document.getElementById(\"%s\");
-			new formCreator(element,request.responseXML,\"%s\");
+			new formCreator(element,request.responseXML,\"%s\",\"%s\");
 		}
-	" url id target
+	" url id target name
                                                                                       
 	
