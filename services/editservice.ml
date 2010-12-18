@@ -9,6 +9,7 @@ let make make_service editservice db =
 	register editservice
 		(fun sp () () ->
 		 (Tododb.get_open db) >>= fun todos ->
+		 let todos = List.map Tododb.get_entrydata todos in
 		 let htmlhead = title (pcdata "Todos bearbeiten") in
 		 return (
 				[h1 [pcdata "Todos bearbeiten:"]]

@@ -65,8 +65,7 @@ let todotime_spec =
 		
 type t = 
 	{duetime : todotime;
-   subject : string;
-	 id : int}
+   subject : string}
 	
 let t_spec =
 	Xml.Element ("record",[
@@ -138,12 +137,9 @@ let get_duetime todo =
 let get_subject todo =
 	todo.subject
 
-let get_id todo =
-	todo.id
-
 (** Todo manipulations **)
 
-let make_open name duetime id = {duetime = duetime;subject=name;id=id}
+let make_open name duetime = {duetime = duetime;subject=name}
 let close todo date = {todo = todo; state = Closed date}
 let drop  todo date = {todo = todo; state = Unfinished date}
 
@@ -247,12 +243,11 @@ let xmltododata todo =
 let xml_of_t todo =
 	Xml.Element ("todo",
 		[
-			("id",string_of_int todo.id);
 			("state","open")
 		], 
 		xmltododata todo)
 
-let t_of_xml ?id xml=
+let t_of_xml xml=
 	Xmlhelpers.check_node 
 		xml
 		~name:"todo"
@@ -268,19 +263,7 @@ let t_of_xml ?id xml=
 		Xmlhelpers.find_child "duetime" |>
 		duetime_of_xml
 	in
-	let id =
-		match id with
-			| Some id -> id
-			| None -> 
-				begin
-					try
-						Xml.attrib xml "id" |> int_of_string
-					with 
-						Xml.No_attribute _ -> 
-							raise (Xmlhelpers.Parse_Error "Todo.t_of_xml: Xml is missing id attribure")
-				end
-	in
-	{subject=subject;duetime=duetime;id=id}
+	{subject=subject;duetime=duetime}
 		
 let xml_of_closed_t closed =
 	let state,date =
@@ -290,8 +273,7 @@ let xml_of_closed_t closed =
 	in
 	Xml.Element ("todo",
 		[
-			("id",string_of_int closed.todo.id);
-		  ("state",state)
+			("state",state)
 		],
 		[Date.xml_of_date date] 
 		@ (xmltododata closed.todo))

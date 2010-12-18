@@ -27,8 +27,7 @@ let todo_table todos =
 	let printer todo =  
 		let subject = Todo.get_subject todo in
 		let duetime = Todo.string_of_todotime (Todo.get_duetime todo) in
-		let id = string_of_int (Todo.get_id todo) in
-		Basic_Tables.tr ~a:[a_id ("todo" ^ id)] 
+		Basic_Tables.tr ~a:[a_class ["todo"]]
 					(Basic_Tables.td [div_with_class "todosubject" [pcdata subject]]) 
 					[Basic_Tables.td [div_with_class "todotime"    [pcdata duetime]]]
 	in  
