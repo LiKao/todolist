@@ -14,6 +14,17 @@ let is_leapyear year =
 	
 let xml_of_year year =
 	Xml.Element ("year",[],[Xml.PCData (string_of_int year)])
+	
+let year_of_xml xml =
+	Printf.printf "year_of_xml\n"; flush stdout;
+	Xmlhelpers.check_node 
+		xml
+		~name:"year"
+		~node_error:"year_of_xml: Not an element node"
+		~type_error:"year_of_xml: Not a year node";
+	xml |>
+	Xmlhelpers.access_text |>
+	int_of_string
 
 (** Months **)
 
@@ -28,7 +39,21 @@ type month = January
 					 | September
 					 | Oktober
 					 | November
-					 | December 
+					 | December
+
+let months = [|
+		January;
+    February;
+		March;
+		April;
+		May;
+		June;
+		July;
+		August;
+		September;
+		Oktober;
+		November;
+		December|]
 					
 let int_of_month = 
 	function
@@ -43,7 +68,10 @@ let int_of_month =
 	|	September  ->      8
 	|	Oktober    ->      9
 	|	November   ->     10
-	|	December   ->     11	
+	|	December   ->     11
+
+let month_of_int i =
+	months.(i)
 	
 let string_of_month = 
 	function
@@ -76,20 +104,7 @@ let days_of_month month year =
 	|	November -> 30
 	|	December -> 31 	
 
-let months = [|
-		January;
-      	February;
-		March;
-		April;
-		May;
-		June;
-		July;
-		August;
-		September;
-		Oktober;
-		November;
-		December|]
-			
+		
 let next_month month = 
 	let monthnum = int_of_month month in
 	months.((monthnum + 1) mod 12)
@@ -110,6 +125,19 @@ let xml_of_month month =
 			"number" 
 			(int_of_month |- string_of_int) 
 			string_of_month))
+			
+let month_of_xml xml =
+	Printf.printf "month_of_xml\n"; flush stdout;
+	Xmlhelpers.check_node
+		xml
+		~name:"month"
+		~node_error:"month_of_xml: not a element node"
+		~type_error:"month_of_xml: not a month node";
+	xml |>
+	Xmlhelpers.find_child "number" |>
+	Xmlhelpers.access_text |>
+	int_of_string |>
+	month_of_int
 	
 (** Days in a month **)
 			
@@ -124,6 +152,17 @@ let dayofmonth_spec =
 
 let xml_of_day day =
 	Xml.Element ("day",[],[Xml.PCData (string_of_int day)])
+	
+let day_of_xml xml =
+	Printf.printf "day_of_xml\n"; flush stdout;
+	Xmlhelpers.check_node
+		xml
+		~name:"day"
+		~node_error:"day_of_xml: Not an element node"
+		~type_error:"day_of_xml: Not a day node";
+	xml |>
+	Xmlhelpers.access_text |>
+	int_of_string
 						
 (** Weekdays **)						
 																		
@@ -135,6 +174,15 @@ type weekday =
 	| Thursday
 	| Friday
 	| Saturday
+
+let weekdays = [|
+   Sunday;
+	 Monday;
+	 Tuesday;
+	 Wednesday;
+	 Thursday;
+	 Friday;
+	 Saturday|]
 
 let string_of_weekday = 
 	function
@@ -155,6 +203,9 @@ let int_of_weekday =
 	|	Thursday  -> 4
 	|	Friday    -> 5
 	|	Saturday  -> 6
+
+let weekday_of_int i =
+	weekdays.(i)
 
 let weekday_spec =
 	let make_entry weekday =
@@ -178,17 +229,6 @@ let weekday_spec =
 		make_entry Saturday
 	])
 		
-	 
-	
-let weekdays = [|
-   Sunday;
-	 Monday;
-	 Tuesday;
-	 Wednesday;
-	 Thursday;
-	 Friday;
-	 Saturday|]
-	
 let is_weekday =
 	function
 	|	Sunday    -> false
@@ -208,7 +248,19 @@ let xml_of_weekday weekday =
 			weekday 
 			"number"
 			(int_of_weekday |- string_of_int)
-			string_of_weekday)) 
+			string_of_weekday))
+			
+let weekday_of_xml xml =
+	Xmlhelpers.check_node 
+		xml
+		~name:"weekday"
+		~node_error:"Date.weekday_of_xml: not a element node"
+		~type_error:"Date.weekday_of_xml: not a weekday node";
+	xml |>
+	Xmlhelpers.find_child "number" |>
+	Xmlhelpers.access_text |>
+	int_of_string |>
+	weekday_of_int
 	
 (** complete dates (year,month and day) **)
 	
@@ -273,6 +325,31 @@ let xml_of_date date =
 		(xml_of_month date.month);
 		(xml_of_year date.year);
 		(xml_of_weekday (get_weekday date));])
+		
+let date_of_xml xml =
+	Xmlhelpers.check_node 
+		xml
+		~name:"date"
+		~node_error:"date_of_xml: not an element node"
+		~type_error:"date_of_xml: not a date node";
+	let day =
+		xml |>
+		Xmlhelpers.find_child "day" |>
+		day_of_xml
+	in
+	let month =
+		xml |>
+		Xmlhelpers.find_child "month" |>
+		month_of_xml
+	in
+	let year =
+		xml |>
+		Xmlhelpers.find_child "year" |>
+		year_of_xml
+	in
+	{year = year;
+	 month = month;
+	 day = day}
 	
 let get_month date =
 	date.month
