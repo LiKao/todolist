@@ -179,8 +179,10 @@ function formCreator(element,xml,target,name) {
     var yearText = responseDoc.createTextNode(calendarObj.getDate().getFullYear());
     yearNode.appendChild(yearText);
     var monthNode = responseDoc.createElement("month");
+    var monthNumberNode = responseDoc.createElement("number");
     var monthText = responseDoc.createTextNode(calendarObj.getDate().getMonth());
-    monthNode.appendChild(monthText);
+    monthNode.appendChild(monthNumberNode);
+    monthNumberNode.appendChild(monthText);
     var dayNode =  responseDoc.createElement("day");
     var dayText = responseDoc.createTextNode(calendarObj.getDate().getDate());
     dayNode.appendChild(dayText);
