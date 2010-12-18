@@ -1,3 +1,5 @@
+open BatStd
+
 (** Types **)
 
 type repetition = 
@@ -166,20 +168,75 @@ let string_of_todo todo =
 	
 (** Conversion from and to xml**)
 let xml_of_repetition repetition =
-	match repetition with
-		Daily -> Xml.Element ("daily",[],[])
-	| Weekly weekday -> Xml.Element ("weekly",[],[Date.xml_of_weekday weekday])
-	| Monthly dayofmonth -> Xml.Element ("monthly",[],[Xml.PCData (string_of_int dayofmonth)])
-	| Weekdays -> Xml.Element ("weekdays",[],[]) 
-	| Weekends -> Xml.Element ("weekends",[],[])
+	Xml.Element ("repetition",[],[
+		match repetition with
+			Daily -> Xml.Element ("daily",[],[])
+		| Weekly weekday -> Xml.Element ("weekly",[],[Date.xml_of_weekday weekday])
+		| Monthly dayofmonth -> Xml.Element ("monthly",[],[Xml.PCData (string_of_int dayofmonth)])
+		| Weekdays -> Xml.Element ("weekdays",[],[]) 
+		| Weekends -> Xml.Element ("weekends",[],[])
+	])
 		
 
+let repetition_of_xml xml =
+	Xmlhelpers.check_node 
+		xml
+		~name:"repetition"
+		~node_error:"Todo.t_of_xml got non element node"
+		~type_error:"Todo.t_of_xml got non-todo node";
+	Xmlhelpers.get_single_child xml |>
+	Xmlhelpers.produce
+		["daily", 
+			(fun _ -> Daily);
+		 "weekly",
+			(fun content ->
+				Weekly ( 
+					Xmlhelpers.get_single_child content |> 
+					Date.weekday_of_xml
+				)
+			);
+		"monthly",
+			(fun content ->
+				Monthly (
+					Xmlhelpers.get_single_child content |>
+					Date.day_of_xml
+				)
+			);
+		"weekdays",
+			(fun _ -> Weekdays);
+		"weekends",
+			(fun _ -> Weekends)]
+			
 let xml_of_duetime duetime =
 	Xml.Element ("duetime",[],[
 		match duetime with
 			Repeated repetition -> Xml.Element ("repeated",[],[xml_of_repetition repetition])
 		|  Single date -> Xml.Element ("single",[],[Date.xml_of_date date])
 	])
+	
+let duetime_of_xml xml =
+	Xmlhelpers.check_node 
+		xml
+		~name:"duetime"
+		~node_error:"Todo.duetime_of_xml got non element node"
+		~type_error:"Todo.duetime_of_xml got non duetime node";
+	Xmlhelpers.get_single_child xml |>
+	Xmlhelpers.produce 
+		["repeated",
+			(fun content ->
+				Repeated ( 
+					Xmlhelpers.get_single_child content |> 
+					repetition_of_xml
+				)
+			);
+		 "single",
+			(fun content ->
+				Single (
+					Xmlhelpers.get_single_child content |> 
+					Date.date_of_xml
+				)
+			)
+		]
 		
 let xmltododata todo =
 	[
@@ -194,6 +251,36 @@ let xml_of_t todo =
 			("state","open")
 		], 
 		xmltododata todo)
+
+let t_of_xml ?id xml=
+	Xmlhelpers.check_node 
+		xml
+		~name:"todo"
+		~node_error:"Todo.t_of_xml got non element node"
+		~type_error:"Todo.t_of_xml got non-todo node";
+	let subject =
+		xml |>
+		Xmlhelpers.find_child "subject" |>
+		Xmlhelpers.access_text
+	in
+	let duetime =
+		xml |>
+		Xmlhelpers.find_child "duetime" |>
+		duetime_of_xml
+	in
+	let id =
+		match id with
+			| Some id -> id
+			| None -> 
+				begin
+					try
+						Xml.attrib xml "id" |> int_of_string
+					with 
+						Xml.No_attribute _ -> 
+							raise (Xmlhelpers.Parse_Error "Todo.t_of_xml: Xml is missing id attribure")
+				end
+	in
+	{subject=subject;duetime=duetime;id=id}
 		
 let xml_of_closed_t closed =
 	let state,date =
