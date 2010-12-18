@@ -9,8 +9,8 @@ open Common
 
 let show_todos db date =
 	Tododb.get_active db date >>= fun active_todos ->
-	let script = Scripts.todo_editor active_todos in
-	return ((Common.todo_table active_todos) @ [script])
+	let active_todos = List.map Tododb.get_entrydata active_todos in
+	return (Common.todo_table active_todos)
 		
 let make_daylist listservice db = 
 	Eliom_predefmod.Blocks.register listservice
@@ -27,18 +27,3 @@ let make_daylist listservice db =
 			with Date.Invalid_date ->
 				return [h1 [pcdata "error"]]
 		)
-		
-let make_todochooser make_service listservice chooserservice =
-	register chooserservice
-		(fun sp () () ->
-			let htmlhead = title (pcdata "Bitte Tag auswählen") in
-			let content =
-				[
-					h1 [pcdata "Bitte Tag auswählen"];
-					Scripts.choose_date listservice sp
-				]
-			in
-			make_service sp htmlhead content
-		)
-	
-			
