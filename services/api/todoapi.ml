@@ -28,4 +28,24 @@ let make_spec db =
 			Xml.to_string_fmt |>
 			return_xml
 	 )
+	
+let make_addaction db =
+	let fallback =
+	Eliom_predefmod.Action.register_new_service
+		~get_params:unit
+		~path:["actions";"add"]
+		(fun sp id () ->return ();)
+	in
+	Eliom_predefmod.Action.register_new_post_service
+		~fallback:fallback
+		~post_params:(string "todo")
+		(fun sp () xml -> 
+			let todo = 
+				xml |>
+				Xml.parse_string |>
+		 		Xmlhelpers.get_single_child |>
+				Todo.t_of_xml
+			in
+			Tododb.add todo db
+		) 
 				 

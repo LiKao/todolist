@@ -9,8 +9,9 @@ open Common
 
 let scripts sp =
 	[js_script ~uri:(make_uri ~service:(static_dir sp) ~sp ["scripts";"date.js"]) ();
-	 js_script ~uri:(make_uri ~service:(static_dir sp) ~sp ["scripts";"navi.js"]) ()
-	] 
+	 js_script ~uri:(make_uri ~service:(static_dir sp) ~sp ["scripts";"navi.js"]) ();
+	 js_script ~uri:(make_uri ~service:(static_dir sp) ~sp ["scripts";"input.js"]) ()
+	]
 
 let make_page sp navigation htmlhead content =
 	let content_name = "content" in
@@ -31,20 +32,12 @@ let listservice =
 		~get_params:(suffix (int "year" ** int "month" ** int "day")) 
 		()
 
-let chooserservice = 
-		Eliom_services.new_service 
-		~path:["choose"] 
-		~get_params:unit 
-		()			
-						
 let editservice =
 	Eliom_services.new_service
 	~path:["edit"]
 	~get_params:unit
 	()
 	
-
-
 let navigation target_id sp =
 	let today = Date.get_today () in
 	let todayservice = 
@@ -74,7 +67,6 @@ let make_service sp htmlhead content =
 	
 let register_all db =
 	Listservice.make_daylist listservice db;
-	Listservice.make_todochooser make_service listservice chooserservice;
 	Editservice.make make_service editservice db
 	
 let done_action = Todoactions.make_doneaction make_service

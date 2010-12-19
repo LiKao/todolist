@@ -19,8 +19,7 @@ let make_daylist listservice db =
 				let date = Date.date_of_ints year month day in
 				let datestring = Date.string_of_date date in
 				let titlestring = Printf.sprintf "Todos für %s" datestring in
-				let htmlhead = title (pcdata titlestring) in
-            	show_todos db date >>= fun todotable ->
+       	show_todos db date >>= fun todotable ->
 				return ([h1 [pcdata titlestring]] @ (todotable)) 
 				>>= fun content ->
 				return content

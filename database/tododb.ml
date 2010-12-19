@@ -77,7 +77,15 @@ let get_id db =
 	db.info.last_id <- db.info.last_id +1;
 	id
 
-let add           todo db = db.open_todos   <- todo :: db.open_todos
+let add todo db_ref =
+	Persistence.change db_ref
+		(fun db ->
+			List.iter 
+				(fun db_entry -> Printf.printf "\t%s\n" (Todo.string_of_todo db_entry.data))
+				db.open_todos;
+			flush stdout;
+			db
+		)
 
 let add_closed todo db handle = 
 	let date = Todo.get_closedate todo in
@@ -95,11 +103,6 @@ let close todo db date =
 		delete todo db
 *)
 
-let make_todo db name duetime  =
-	let id = get_id db in
-	let todo = Todo.make_open name duetime in
-	add {handle = id; data = todo} db
-	
 (** Operations with todos **)	
 
 
